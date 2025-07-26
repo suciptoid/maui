@@ -9,8 +9,7 @@ defmodule MAUI.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps(),
-      listeners: [Phoenix.CodeReloader]
+      deps: deps()
     ]
   end
 
@@ -19,8 +18,7 @@ defmodule MAUI.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {MAUI.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger]
     ]
   end
 
@@ -33,21 +31,8 @@ defmodule MAUI.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.8.0-rc.4", override: true},
-      {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
-      {:tailwind, "~> 0.3", runtime: Mix.env() == :dev},
-      {:heroicons,
-       github: "tailwindlabs/heroicons",
-       tag: "v2.2.0",
-       sparse: "optimized",
-       app: false,
-       compile: false,
-       depth: 1},
-      {:telemetry_metrics, "~> 1.0"},
-      {:telemetry_poller, "~> 1.0"},
-      {:jason, "~> 1.2"},
-      {:dns_cluster, "~> 0.2.0"},
-      {:bandit, "~> 1.5"}
+      {:phoenix_live_view, "~> 1.1.0-rc.0"},
+      {:esbuild, "~> 0.10", runtime: Mix.env() == :dev}
     ]
   end
 
@@ -60,13 +45,8 @@ defmodule MAUI.MixProject do
   defp aliases do
     [
       setup: ["deps.get", "assets.setup", "assets.build"],
-      "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["tailwind maui", "esbuild maui"],
-      "assets.deploy": [
-        "tailwind maui --minify",
-        "esbuild maui --minify",
-        "phx.digest"
-      ]
+      "assets.setup": ["esbuild.install --if-missing"],
+      "assets.build": ["esbuild main", "esbuild module"]
     ]
   end
 end

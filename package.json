@@ -1,0 +1,24 @@
+{
+  "name": "maui",
+  "version": "0.1.0",
+  "description": "Maui Hooks",
+  "module": "./priv/static/maui.mjs",
+  "main": "./priv/static/maui.cjs.js",
+  "exports": {
+    "import": "./priv/static/maui.mjs",
+    "require": "./priv/static/maui.cjs.js"
+  },
+  "files": [
+    "README.md",
+    "LICENSE.md",
+    "package.json",
+    "priv/static/*",
+    "assets/js/*"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 0"
+  },
+  "keywords": [],
+  "author": "Sucipto <hi@sucipto.id>",
+  "license": "MIT"
+}
