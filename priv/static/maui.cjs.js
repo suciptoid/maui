@@ -4057,6 +4057,15 @@ var Popover = class extends ViewHook {
   }
 };
 
+// js/select.js
+var Select = class extends Popover {
+  mounted() {
+    this.name = "select";
+    super.mounted();
+    this.log("mounted");
+  }
+};
+
 // js/index.js
 var Hooks2 = {
   Popover,
