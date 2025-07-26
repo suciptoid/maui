@@ -19,7 +19,7 @@ defmodule MAUI.MenuButton do
     assigns = assigns |> assign(popup: popup)
 
     ~H"""
-    <Maui.Popover.base id={@id} phx-hook="Popover" class="relative">
+    <MAUI.Popover.base id={@id} phx-hook="Popover" class="relative">
       <:trigger :for={button <- @button} class={Map.get(button, :class, "")}>
         {render_slot(button)}
       </:trigger>
@@ -27,7 +27,7 @@ defmodule MAUI.MenuButton do
       <:popup class={Map.get(@popup, :class, "")} role="menu">
         {render_slot(@popup)}
       </:popup>
-    </Maui.Popover.base>
+    </MAUI.Popover.base>
     """
   end
 
