@@ -9,7 +9,7 @@ import Config
 
 esbuild = fn args ->
   [
-    args: ~w(js/index.js --bundle --alias:@=.) ++ args,
+    args: ~w(js/index.js --bundle --external:phoenix_live_view --alias:@=.) ++ args,
     cd: Path.expand("../assets", __DIR__),
     env: %{"NODE_PATH" => [Path.expand("../deps", __DIR__), Mix.Project.build_path()]}
   ]
