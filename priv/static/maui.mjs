@@ -1328,6 +1328,8 @@ var Popover = class extends ViewHook {
   expanded = false;
   name = "popover";
   placement = "bottom-start";
+  strategy = "absolute";
+  // floating-ui strategy
   currentIndex = -1;
   #outside_listener;
   #clear_floating;
@@ -1338,6 +1340,7 @@ var Popover = class extends ViewHook {
     this.popup = this.el.querySelector("[role='menu'],[role='listbox']");
     this.search = this.el.querySelector("input[type='text'][role='combobox']");
     this.placement = this.el.dataset.placement || this.placement;
+    this.strategy = this.el.dataset.strategy || this.strategy;
     this.items = this.popup.querySelectorAll(
       "[role='option'],[role='menuitem']"
     );
@@ -1473,11 +1476,13 @@ var Popover = class extends ViewHook {
   refreshFloatingUI() {
     computePosition2(this.trigger, this.popup, {
       placement: this.placement,
+      strategy: this.strategy,
       middleware: [offset2(8), flip2(), shift2()]
-    }).then(({ x, y }) => {
+    }).then(({ x, y, strategy }) => {
       Object.assign(this.popup.style, {
         left: `${x}px`,
-        top: `${y}px`
+        top: `${y}px`,
+        position: strategy
       });
     });
   }

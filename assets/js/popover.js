@@ -11,6 +11,7 @@ export default class Popover extends ViewHook {
   expanded = false;
   name = "popover";
   placement = "bottom-start";
+  strategy = "absolute"; // floating-ui strategy
   currentIndex = -1;
 
   #outside_listener;
@@ -25,6 +26,7 @@ export default class Popover extends ViewHook {
     this.search = this.el.querySelector("input[type='text'][role='combobox']");
 
     this.placement = this.el.dataset.placement || this.placement;
+    this.strategy = this.el.dataset.strategy || this.strategy;
 
     this.items = this.popup.querySelectorAll(
       "[role='option'],[role='menuitem']",
@@ -203,11 +205,13 @@ export default class Popover extends ViewHook {
   refreshFloatingUI() {
     computePosition(this.trigger, this.popup, {
       placement: this.placement,
+      strategy: this.strategy,
       middleware: [offset(8), flip(), shift()],
-    }).then(({ x, y }) => {
+    }).then(({ x, y, strategy }) => {
       Object.assign(this.popup.style, {
         left: `${x}px`,
         top: `${y}px`,
+        position: strategy,
       });
     });
   }
