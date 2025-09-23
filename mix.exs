@@ -9,7 +9,8 @@ defmodule MAUI.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      package: package()
     ]
   end
 
@@ -31,8 +32,22 @@ defmodule MAUI.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix_live_view, "~> 1.1.0-rc.0"},
-      {:esbuild, "~> 0.10", runtime: Mix.env() == :dev}
+      {:phoenix_live_view, "~> 1.1.0"},
+      {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
+    ]
+  end
+
+  defp package do
+    [
+      name: :maui,
+      description: "A Phoenix LiveView UI toolkit",
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/suciptoid/maui"},
+      maintainers: ["Sucipto"],
+      files: ~w(
+        assets/js lib priv mix.exs package.json README.md
+      )
     ]
   end
 
@@ -46,7 +61,7 @@ defmodule MAUI.MixProject do
     [
       setup: ["deps.get", "assets.setup", "assets.build"],
       "assets.setup": ["esbuild.install --if-missing"],
-      "assets.build": ["esbuild main", "esbuild module"]
+      "assets.build": ["cmd --cd assets npm ci", "esbuild main", "esbuild module"]
     ]
   end
 end

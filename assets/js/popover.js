@@ -5,7 +5,7 @@ import {
   flip,
   shift,
   autoUpdate,
-} from "@/vendor/floating-ui";
+} from "@floating-ui/dom";
 
 export default class Popover extends ViewHook {
   expanded = false;
