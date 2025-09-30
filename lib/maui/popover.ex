@@ -1,4 +1,4 @@
-defmodule MAUI.Popover do
+defmodule Maui.Popover do
   use Phoenix.Component
 
   @doc """
@@ -18,6 +18,9 @@ defmodule MAUI.Popover do
     attr :role, :string, doc: "Popup role"
   end
 
+  slot :inner_block,
+    doc: "Inner block / children for the popover, can be used for non <button> custom trigger "
+
   def base(assigns) do
     ~H"""
     <div id={@id} {@rest}>
@@ -34,6 +37,9 @@ defmodule MAUI.Popover do
       >
         {render_slot(t)}
       </button>
+      <%= if @trigger == [] do %>
+        {render_slot(@inner_block)}
+      <% end %>
       <%!-- Popover --%>
       <div
         :for={p <- @popup}

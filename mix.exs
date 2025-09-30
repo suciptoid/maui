@@ -1,10 +1,10 @@
-defmodule MAUI.MixProject do
+defmodule Maui.MixProject do
   use Mix.Project
 
   def project do
     [
       app: :maui,
-      version: "0.1.0",
+      version: "0.1.5",
       elixir: "~> 1.15",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -46,7 +46,7 @@ defmodule MAUI.MixProject do
       links: %{"GitHub" => "https://github.com/suciptoid/maui"},
       maintainers: ["Sucipto"],
       files: ~w(
-        assets/js lib priv mix.exs package.json README.md
+        assets/js assets/css lib priv mix.exs package.json README.md
       )
     ]
   end
@@ -61,7 +61,9 @@ defmodule MAUI.MixProject do
     [
       setup: ["deps.get", "assets.setup", "assets.build"],
       "assets.setup": ["esbuild.install --if-missing"],
-      "assets.build": ["cmd --cd assets npm ci", "esbuild main", "esbuild module"]
+      "assets.build": ["cmd --cd assets npm ci", "esbuild main", "esbuild module"],
+      build: ["assets.build", "hex.build"],
+      publish: ["build", "hex.publish"]
     ]
   end
 end

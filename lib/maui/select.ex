@@ -1,4 +1,4 @@
-defmodule MAUI.Select do
+defmodule Maui.Select do
   use Phoenix.Component
 
   attr :id, :string, required: true
@@ -10,13 +10,13 @@ defmodule MAUI.Select do
 
   def select(assigns) do
     ~H"""
-    <MAUI.Popover.base id={@id} phx-hook="Select" class="relative">
+    <Maui.Popover.base id={@id} phx-hook="Select" class="relative">
       <:trigger class={@class}>
         {@placeholder}
       </:trigger>
       <:popup class="aria-hidden:hidden min-w-[250px] h-[300px] rounded-md shadow-md border border-gray-100 bg-white absolute top-10 z-10">
       </:popup>
-    </MAUI.Popover.base>
+    </Maui.Popover.base>
     """
   end
 

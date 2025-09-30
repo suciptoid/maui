@@ -4,4 +4,6 @@ import Select from "./select";
 export const Hooks = {
   Popover,
   Select,
+  "Maui.Popover": Popover,
+  "Maui.Select": Select,
 };

@@ -12,6 +12,7 @@ export default class Popover extends ViewHook {
   name = "popover";
   placement = "bottom-start";
   strategy = "absolute"; // floating-ui strategy
+  event_trigger = "click"; // "click" | "hover" | "focus"
   currentIndex = -1;
 
   #outside_listener;
@@ -19,14 +20,13 @@ export default class Popover extends ViewHook {
 
   mounted() {
     // Initialize trigger and popup elements
-    this.trigger = this.el.querySelector(
-      "[aria-haspopup='menu'],[aria-haspopup='listbox'],[role='combobox']",
-    );
+    this.trigger = this.el.querySelector("[aria-haspopup][role='combobox']");
     this.popup = this.el.querySelector("[role='menu'],[role='listbox']");
     this.search = this.el.querySelector("input[type='text'][role='combobox']");
 
     this.placement = this.el.dataset.placement || this.placement;
     this.strategy = this.el.dataset.strategy || this.strategy;
+    this.event_trigger = this.el.dataset.trigger || this.event_trigger;
 
     this.items = this.popup.querySelectorAll(
       "[role='option'],[role='menuitem']",
@@ -34,16 +34,40 @@ export default class Popover extends ViewHook {
 
     this.refreshExpanded();
 
-    // Trigger click handler
-    this.trigger.addEventListener("click", () => {
-      if (this.expanded) {
-        this.closePopover();
-      } else {
-        this.openPopover();
-      }
+    if (this.event_trigger === "click") {
+      // Trigger click handler
+      this.trigger.addEventListener("click", () => {
+        if (this.expanded) {
+          this.closePopover();
+        } else {
+          this.openPopover();
+        }
 
-      this.refreshExpanded();
-    });
+        this.refreshExpanded();
+      });
+    } else if (this.event_trigger === "hover") {
+      // Trigger hover handler
+      this.trigger.addEventListener("mouseenter", () => {
+        this.openPopover();
+        this.refreshExpanded();
+      });
+
+      this.trigger.addEventListener("mouseleave", () => {
+        this.closePopover();
+        this.refreshExpanded();
+      });
+    } else if (this.event_trigger === "focus") {
+      // Trigger focus handler
+      this.trigger.addEventListener("focus", () => {
+        this.openPopover();
+        this.refreshExpanded();
+      });
+
+      this.trigger.addEventListener("blur", () => {
+        this.closePopover();
+        this.refreshExpanded();
+      });
+    }
 
     // Keydown handler
     this.el.addEventListener("keydown", this.handleContainerKeyDown.bind(this));
