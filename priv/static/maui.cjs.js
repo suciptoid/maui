@@ -1386,7 +1386,7 @@ var Popover = class extends import_phoenix_live_view.ViewHook {
     );
     this.refreshExpanded();
     if (this.event_trigger === "click") {
-      this.trigger.addEventListener("click", () => {
+      this.trigger?.addEventListener("click", () => {
         if (this.expanded) {
           this.closePopover();
         } else {
@@ -1395,26 +1395,26 @@ var Popover = class extends import_phoenix_live_view.ViewHook {
         this.refreshExpanded();
       });
     } else if (this.event_trigger === "hover") {
-      this.trigger.addEventListener("mouseenter", () => {
+      this.trigger?.addEventListener("mouseenter", () => {
         this.openPopover();
         this.refreshExpanded();
       });
-      this.trigger.addEventListener("mouseleave", () => {
+      this.trigger?.addEventListener("mouseleave", () => {
         this.closePopover();
         this.refreshExpanded();
       });
     } else if (this.event_trigger === "focus") {
-      this.trigger.addEventListener("focus", () => {
+      this.trigger?.addEventListener("focus", () => {
         this.openPopover();
         this.refreshExpanded();
       });
-      this.trigger.addEventListener("blur", () => {
+      this.trigger?.addEventListener("blur", () => {
         this.closePopover();
         this.refreshExpanded();
       });
     }
     this.el.addEventListener("keydown", this.handleContainerKeyDown.bind(this));
-    this.trigger.addEventListener(
+    this.trigger?.addEventListener(
       "keydown",
       this.handleTriggerKeyDown.bind(this)
     );
@@ -1459,7 +1459,7 @@ var Popover = class extends import_phoenix_live_view.ViewHook {
       case "Escape":
         event.preventDefault();
         this.closePopover();
-        this.trigger.focus();
+        this.trigger?.focus();
         break;
       case "ArrowDown":
       case "ArrowUp":
@@ -1587,10 +1587,91 @@ var Select = class extends Popover {
   }
 };
 
+// js/loading.js
+var import_phoenix_live_view2 = require("phoenix_live_view");
+State = {
+  IDLE: 0,
+  STARTING: 1
+};
+var LoadingBar = class extends import_phoenix_live_view2.ViewHook {
+  progress = 0;
+  #delay = 500;
+  #delayTimer = null;
+  #raf = null;
+  #state = State.IDLE;
+  #boundShow = null;
+  #boundHide = null;
+  mounted() {
+    this.progressEl = this.el.querySelector("#loadingbar-progress");
+    this.#delay = parseInt(this.el.dataset.delay || "0") || this.#delay;
+    this.#boundShow = this._show.bind(this);
+    this.#boundHide = this._hide.bind(this);
+    this.#state = State.IDLE;
+    window.addEventListener("phx:page-loading-start", this.#boundShow);
+    window.addEventListener("phx:page-loading-stop", this.#boundHide);
+  }
+  _show(info) {
+    this._reset();
+    this.#state = State.STARTING;
+    this.#delayTimer = setTimeout(() => {
+      if (this.#state === State.STARTING) {
+        this._start();
+      }
+    }, this.#delay);
+  }
+  _start() {
+    let lastTime = performance.now();
+    const step = (now) => {
+      const dt = now - lastTime;
+      lastTime = now;
+      if (this.progress < 50) {
+        const delta = (100 - this.progress) * 0.01 * (dt / 16);
+        this.progress = Math.min(this.progress + delta, 50);
+      } else if (this.progress < 90) {
+        const delta = (100 - this.progress) * 25e-4 * (dt / 16);
+        this.progress = Math.min(this.progress + delta, 90);
+      } else if (this.progress < 99) {
+        const delta = (100 - this.progress) * 5e-4 * (dt / 16);
+        this.progress = Math.min(this.progress + delta, 99);
+      }
+      this.progressEl.style.width = `${this.progress}%`;
+      this.#raf = requestAnimationFrame(step);
+    };
+    this.#raf = requestAnimationFrame(step);
+  }
+  _reset() {
+    this.progressEl.style.transition = "none";
+    this.progressEl.style.width = "0%";
+    this.progressEl.offsetHeight;
+    this.progressEl.style.transition = "";
+    this.progress = 0;
+    if (this.#delayTimer) {
+      clearTimeout(this.#delayTimer);
+      this.#delayTimer = null;
+    }
+    this.#state = State.IDLE;
+    cancelAnimationFrame(this.#raf);
+  }
+  _hide(info) {
+    this.#state = State.IDLE;
+    if (this.progress > 0) {
+      this.progress = 100;
+      this.progressEl.style.width = "100%";
+    }
+    setTimeout(() => {
+      this._reset();
+    }, 500);
+  }
+  destroyed() {
+    window.removeEventListener("phx:page-loading-start", this.#boundShow);
+    window.removeEventListener("phx:page-loading-stop", this.#boundHide);
+    this._reset();
+  }
+};
+
 // js/index.js
 var Hooks = {
-  Popover,
-  Select,
+  "Maui.LoadingBar": LoadingBar,
   "Maui.Popover": Popover,
   "Maui.Select": Select
 };

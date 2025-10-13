@@ -36,7 +36,7 @@ export default class Popover extends ViewHook {
 
     if (this.event_trigger === "click") {
       // Trigger click handler
-      this.trigger.addEventListener("click", () => {
+      this.trigger?.addEventListener("click", () => {
         if (this.expanded) {
           this.closePopover();
         } else {
@@ -47,23 +47,23 @@ export default class Popover extends ViewHook {
       });
     } else if (this.event_trigger === "hover") {
       // Trigger hover handler
-      this.trigger.addEventListener("mouseenter", () => {
+      this.trigger?.addEventListener("mouseenter", () => {
         this.openPopover();
         this.refreshExpanded();
       });
 
-      this.trigger.addEventListener("mouseleave", () => {
+      this.trigger?.addEventListener("mouseleave", () => {
         this.closePopover();
         this.refreshExpanded();
       });
     } else if (this.event_trigger === "focus") {
       // Trigger focus handler
-      this.trigger.addEventListener("focus", () => {
+      this.trigger?.addEventListener("focus", () => {
         this.openPopover();
         this.refreshExpanded();
       });
 
-      this.trigger.addEventListener("blur", () => {
+      this.trigger?.addEventListener("blur", () => {
         this.closePopover();
         this.refreshExpanded();
       });
@@ -71,7 +71,7 @@ export default class Popover extends ViewHook {
 
     // Keydown handler
     this.el.addEventListener("keydown", this.handleContainerKeyDown.bind(this));
-    this.trigger.addEventListener(
+    this.trigger?.addEventListener(
       "keydown",
       this.handleTriggerKeyDown.bind(this),
     );
@@ -134,7 +134,7 @@ export default class Popover extends ViewHook {
       case "Escape":
         event.preventDefault();
         this.closePopover();
-        this.trigger.focus();
+        this.trigger?.focus();
         break;
       case "ArrowDown":
       case "ArrowUp":
