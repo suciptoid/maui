@@ -9,12 +9,12 @@ defmodule Maui.Loading do
     <Maui.Loading.loading_bar />
 
   to override color:
-    <Maui.Loading.loading_bar data-delay="1" class="!bg-amber-400 !shadow-amber-500/20" />
+    <Maui.Loading.loading_bar delay={100} class="!bg-amber-400 !shadow-amber-500/20" />
 
 
   """
-  attr :delay, :integer, default: 500
-  attr :class, :string, default: ""
+  attr(:delay, :integer, default: 500)
+  attr(:class, :string, default: "")
 
   def loading_bar(assigns) do
     ~H"""

@@ -13,6 +13,7 @@ defmodule Maui do
       import Maui.Input
       import Maui.Button
       import Maui.Dropdown
+      import Maui.Alert
     end
   end
 
