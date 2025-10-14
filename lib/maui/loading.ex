@@ -6,17 +6,17 @@ defmodule Maui.Loading do
 
   put this in your layout or in `root.html.heex`
 
-    <Maui.Loading.loading_bar />
+    <Maui.Loading.topbar />
 
   to override color:
-    <Maui.Loading.loading_bar delay={100} class="!bg-amber-400 !shadow-amber-500/20" />
+    <Maui.Loading.topbar delay={100} class="!bg-amber-400 !shadow-amber-500/20" />
 
 
   """
-  attr(:delay, :integer, default: 500)
-  attr(:class, :string, default: "")
+  attr :delay, :integer, default: 300
+  attr :class, :string, default: ""
 
-  def loading_bar(assigns) do
+  def topbar(assigns) do
     ~H"""
     <div
       phx-hook="Maui.LoadingBar"

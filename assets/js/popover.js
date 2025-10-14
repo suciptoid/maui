@@ -20,7 +20,7 @@ export default class Popover extends ViewHook {
 
   mounted() {
     // Initialize trigger and popup elements
-    this.trigger = this.el.querySelector("[aria-haspopup][role='combobox']");
+    this.trigger = this.el.querySelector("[aria-haspopup],[role='combobox']");
     this.popup = this.el.querySelector("[role='menu'],[role='listbox']");
     this.search = this.el.querySelector("input[type='text'][role='combobox']");
 

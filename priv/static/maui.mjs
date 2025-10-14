@@ -1570,29 +1570,29 @@ State = {
 };
 var LoadingBar = class extends ViewHook2 {
   progress = 0;
-  #delay = 500;
-  #delayTimer = null;
-  #raf = null;
-  #state = State.IDLE;
+  delay = 300;
+  delayTimer = null;
+  raf = null;
+  state = State.IDLE;
   #boundShow = null;
   #boundHide = null;
   mounted() {
     this.progressEl = this.el.querySelector("#loadingbar-progress");
-    this.#delay = parseInt(this.el.dataset.delay || "0") || this.#delay;
+    this.delay = parseInt(this.el.dataset.delay || "0") || this.delay;
     this.#boundShow = this._show.bind(this);
     this.#boundHide = this._hide.bind(this);
-    this.#state = State.IDLE;
+    this.state = State.IDLE;
     window.addEventListener("phx:page-loading-start", this.#boundShow);
     window.addEventListener("phx:page-loading-stop", this.#boundHide);
   }
   _show(info) {
-    this._reset();
-    this.#state = State.STARTING;
-    this.#delayTimer = setTimeout(() => {
-      if (this.#state === State.STARTING) {
+    this._clear();
+    this.delayTimer = setTimeout(() => {
+      if (this.state === State.IDLE) {
+        this.state = State.STARTING;
         this._start();
       }
-    }, this.#delay);
+    }, this.delay);
   }
   _start() {
     let lastTime = performance.now();
@@ -1610,9 +1610,9 @@ var LoadingBar = class extends ViewHook2 {
         this.progress = Math.min(this.progress + delta, 99);
       }
       this.progressEl.style.width = `${this.progress}%`;
-      this.#raf = requestAnimationFrame(step);
+      this.raf = requestAnimationFrame(step);
     };
-    this.#raf = requestAnimationFrame(step);
+    this.raf = requestAnimationFrame(step);
   }
   _reset() {
     this.progressEl.style.transition = "none";
@@ -1620,15 +1620,13 @@ var LoadingBar = class extends ViewHook2 {
     this.progressEl.offsetHeight;
     this.progressEl.style.transition = "";
     this.progress = 0;
-    if (this.#delayTimer) {
-      clearTimeout(this.#delayTimer);
-      this.#delayTimer = null;
-    }
-    this.#state = State.IDLE;
-    cancelAnimationFrame(this.#raf);
+    this._clear();
+    this.state = State.IDLE;
+    cancelAnimationFrame(this.raf);
   }
   _hide(info) {
-    this.#state = State.IDLE;
+    this.state = State.IDLE;
+    this._clear();
     if (this.progress > 0) {
       this.progress = 100;
       this.progressEl.style.width = "100%";
@@ -1637,10 +1635,15 @@ var LoadingBar = class extends ViewHook2 {
       this._reset();
     }, 500);
   }
+  _clear() {
+    if (this.delayTimer) {
+      clearTimeout(this.delayTimer);
+      this.delayTimer = null;
+    }
+  }
   destroyed() {
     window.removeEventListener("phx:page-loading-start", this.#boundShow);
     window.removeEventListener("phx:page-loading-stop", this.#boundHide);
-    this._reset();
   }
 };
 
