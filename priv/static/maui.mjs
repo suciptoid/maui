@@ -327,6 +327,68 @@ async function detectOverflow(state, options) {
     right: (elementClientRect.right - clippingClientRect.right + paddingObject.right) / offsetScale.x
   };
 }
+var arrow = (options) => ({
+  name: "arrow",
+  options,
+  async fn(state) {
+    const {
+      x,
+      y,
+      placement,
+      rects,
+      platform: platform2,
+      elements,
+      middlewareData
+    } = state;
+    const {
+      element,
+      padding = 0
+    } = evaluate(options, state) || {};
+    if (element == null) {
+      return {};
+    }
+    const paddingObject = getPaddingObject(padding);
+    const coords = {
+      x,
+      y
+    };
+    const axis = getAlignmentAxis(placement);
+    const length = getAxisLength(axis);
+    const arrowDimensions = await platform2.getDimensions(element);
+    const isYAxis = axis === "y";
+    const minProp = isYAxis ? "top" : "left";
+    const maxProp = isYAxis ? "bottom" : "right";
+    const clientProp = isYAxis ? "clientHeight" : "clientWidth";
+    const endDiff = rects.reference[length] + rects.reference[axis] - coords[axis] - rects.floating[length];
+    const startDiff = coords[axis] - rects.reference[axis];
+    const arrowOffsetParent = await (platform2.getOffsetParent == null ? void 0 : platform2.getOffsetParent(element));
+    let clientSize = arrowOffsetParent ? arrowOffsetParent[clientProp] : 0;
+    if (!clientSize || !await (platform2.isElement == null ? void 0 : platform2.isElement(arrowOffsetParent))) {
+      clientSize = elements.floating[clientProp] || rects.floating[length];
+    }
+    const centerToReference = endDiff / 2 - startDiff / 2;
+    const largestPossiblePadding = clientSize / 2 - arrowDimensions[length] / 2 - 1;
+    const minPadding = min(paddingObject[minProp], largestPossiblePadding);
+    const maxPadding = min(paddingObject[maxProp], largestPossiblePadding);
+    const min$1 = minPadding;
+    const max2 = clientSize - arrowDimensions[length] - maxPadding;
+    const center = clientSize / 2 - arrowDimensions[length] / 2 + centerToReference;
+    const offset3 = clamp(min$1, center, max2);
+    const shouldAddOffset = !middlewareData.arrow && getAlignment(placement) != null && center !== offset3 && rects.reference[length] / 2 - (center < min$1 ? minPadding : maxPadding) - arrowDimensions[length] / 2 < 0;
+    const alignmentOffset = shouldAddOffset ? center < min$1 ? center - min$1 : center - max2 : 0;
+    return {
+      [axis]: coords[axis] + alignmentOffset,
+      data: {
+        [axis]: offset3,
+        centerOffset: center - offset3 - alignmentOffset,
+        ...shouldAddOffset && {
+          alignmentOffset
+        }
+      },
+      reset: shouldAddOffset
+    };
+  }
+});
 var flip = function(options) {
   if (options === void 0) {
     options = {};
@@ -1321,6 +1383,7 @@ function autoUpdate(reference, floating, update, options) {
 var offset2 = offset;
 var shift2 = shift;
 var flip2 = flip;
+var arrow2 = arrow;
 var computePosition2 = (reference, floating, options) => {
   const cache = /* @__PURE__ */ new Map();
   const mergedOptions = {
@@ -1350,7 +1413,7 @@ var Popover = class extends ViewHook {
   #outside_listener;
   #clear_floating;
   mounted() {
-    this.trigger = this.el.querySelector("[aria-haspopup][role='combobox']");
+    this.trigger = this.el.querySelector("[aria-haspopup],[role='combobox']");
     this.popup = this.el.querySelector("[role='menu'],[role='listbox']");
     this.search = this.el.querySelector("input[type='text'][role='combobox']");
     this.placement = this.el.dataset.placement || this.placement;
@@ -1647,11 +1710,133 @@ var LoadingBar = class extends ViewHook2 {
   }
 };
 
+// js/tooltip.js
+import { ViewHook as ViewHook3 } from "phoenix_live_view";
+var Tooltip = class extends ViewHook3 {
+  placement = "top-center";
+  #clear_floating;
+  mounted() {
+    this.trigger = this.el.querySelector(':scope > :not([role="tooltip"])');
+    this.tooltip = this.el.querySelector(':scope > [role="tooltip"]');
+    this.arrow = this.el.querySelector(
+      ':scope > [role="tooltip"] > [data-arrow]'
+    );
+    this.placement = this.el.dataset.placement || this.placement;
+    this.#clear_floating = autoUpdate(this.trigger, this.tooltip, () => {
+      this._calculatePosition();
+    });
+  }
+  destroyed() {
+    if (this.#clear_floating) {
+      this.#clear_floating();
+    }
+  }
+  _calculatePosition() {
+    computePosition2(this.trigger, this.tooltip, {
+      placement: this.placement,
+      strategy: "fixed",
+      middleware: [offset2(8), flip2(), shift2(), arrow2({ element: this.arrow })]
+    }).then(({ x, y, strategy, middlewareData }) => {
+      Object.assign(this.tooltip.style, {
+        left: `${x}px`,
+        top: `${y}px`,
+        position: strategy
+      });
+      if (middlewareData.arrow) {
+        const { x: x2, y: y2 } = middlewareData.arrow;
+        Object.assign(this.arrow.style, {
+          left: x2 != null ? `${x2}px` : "",
+          top: y2 != null ? `${y2}px` : ""
+        });
+      }
+    });
+  }
+};
+
+// js/flash.js
+import { ViewHook as ViewHook4 } from "phoenix_live_view";
+var FlashGroup = class extends ViewHook4 {
+  max_flashes = 3;
+  mounted() {
+    this._updateFlashList();
+    this.max_flashes = this.el.dataset.maxFlashes || this.max_flashes;
+    this.el.addEventListener(
+      "mouseenter",
+      this._onContainerMouseEnter.bind(this)
+    );
+    this.el.addEventListener(
+      "mouseleave",
+      this._onContainerMouseLeave.bind(this)
+    );
+  }
+  updated() {
+    this._updateFlashList();
+  }
+  destroyed() {
+    this.el.removeEventListener(
+      "mouseenter",
+      this._onContainerMouseEnter.bind(this)
+    );
+    this.el.removeEventListener(
+      "mouseleave",
+      this._onContainerMouseLeave.bind(this)
+    );
+  }
+  _onContainerMouseEnter() {
+  }
+  _onContainerMouseLeave() {
+  }
+  _onClose(event) {
+    const flash = event.currentTarget.closest('[role="alert"]');
+    if (this.liveSocket?.isConnected()) {
+      this.pushEvent("lv:clear-flash", { value: flash.dataset.flashId });
+    }
+    flash.remove();
+    this._updateFlashList();
+  }
+  _updateFlashList() {
+    this.flash = this.el.querySelectorAll('[role="alert"]');
+    const position = this.el.dataset.position;
+    this.flash.forEach((flash, index) => {
+      flash.dataset.index = index;
+      flash.dataset.position = position;
+      flash.style.setProperty("--flash-index", index);
+      if (index === 0 && flash.dataset.visible !== "true") {
+        flash.setAttribute("aria-hidden", "true");
+        flash.style.transition = "none";
+        flash.style.setProperty(
+          "--flash-offset-y",
+          position.startsWith("bottom-") ? "200%" : "-200%"
+        );
+      }
+      flash.dataset.visible = "true";
+      const height = flash.offsetHeight;
+      const offsetY = Array.from(this.flash).slice(0, index).reduce((acc, item) => acc + item.offsetHeight + 10, 0);
+      flash.style.setProperty("--flash-height", `${height}px`);
+      flash.setAttribute("aria-hidden", "false");
+      requestAnimationFrame(() => {
+        flash.style.transition = "";
+        flash.style.setProperty(
+          "--flash-offset-y",
+          position.startsWith("bottom-") ? `${-offsetY}px` : `${offsetY}px`
+        );
+      });
+      const closeButton = flash.querySelector("button[data-close]");
+      if (closeButton?.dataset.close == "") {
+        closeButton?.addEventListener("click", this._onClose.bind(this));
+        closeButton.dataset.close = "true";
+      }
+    });
+  }
+};
+
 // js/index.js
 var Hooks = {
   "Maui.LoadingBar": LoadingBar,
   "Maui.Popover": Popover,
-  "Maui.Select": Select
+  "Maui.Select": Select,
+  "Maui.Tooltip": Tooltip,
+  "Maui.FlashGroup": FlashGroup
 };
 export {
   Hooks

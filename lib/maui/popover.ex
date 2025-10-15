@@ -53,4 +53,32 @@ defmodule Maui.Popover do
     </div>
     """
   end
+
+  @doc """
+
+  """
+  attr :id, :string
+  slot :inner_block
+  slot :tooltip
+
+  def tooltip(assigns) do
+    assigns = assign_new(assigns, :id, fn -> "tooltip#{System.unique_integer()}" end)
+
+    ~H"""
+    <div id={@id} class="w-fit group/tooltip" phx-hook="Maui.Tooltip">
+      {render_slot(@inner_block)}
+
+      <div :if={@tooltip != []} role="tooltip" class={[
+      "group-hover/tooltip:block hidden",
+      "bg-foreground text-background animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 w-fit origin-(--radix-tooltip-content-transform-origin) rounded-md px-3 py-1.5 text-xs text-balance"
+      ]} >
+        {render_slot(@tooltip)}
+
+        <div data-arrow class="absolute bg-foreground fill-foreground z-50 size-2.5 rotate-45 rounded-[2px]">
+        </div>
+
+      </div>
+    </div>
+    """
+  end
 end

@@ -4,7 +4,7 @@ defmodule Maui.MixProject do
   def project do
     [
       app: :maui,
-      version: "0.1.8",
+      version: "0.1.11",
       elixir: "~> 1.15",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -63,7 +63,8 @@ defmodule Maui.MixProject do
       "assets.setup": ["esbuild.install --if-missing"],
       "assets.build": ["cmd --cd assets npm ci", "esbuild main", "esbuild module"],
       build: ["assets.build", "hex.build"],
-      publish: ["build", "hex.publish"]
+      publish: ["build", "hex.publish"],
+      dev: ["esbuild module --watch"]
     ]
   end
 end

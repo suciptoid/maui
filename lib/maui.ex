@@ -14,6 +14,7 @@ defmodule Maui do
       import Maui.Button
       import Maui.Dropdown
       import Maui.Alert
+      import Maui.Popover
     end
   end
 
