@@ -18,7 +18,7 @@ defmodule Maui.Input do
     assigns = map_field(assigns)
 
     ~H"""
-    <div class="grid w-full max-w-sm items-center gap-3">
+    <div class="grid w-full items-center gap-3">
       <.label for={@id}>{@label}</.label>
       <.input id={@id} class={@class} type={@type} field={@field} {@rest} />
     </div>
