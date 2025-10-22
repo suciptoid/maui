@@ -86,19 +86,15 @@ defmodule Maui.Popover do
         data-placement={@placement}
         class={[
           "bg-foreground text-background",
-          "duration-100 transition ease-in",
-          "data-[placement=top]:aria-hidden:translate-y-2 data-[placement=top]:translate-y-0",
-          "data-[placement=bottom]:aria-hidden:-translate-y-2 data-[placement=bottom]:translate-y-0",
-          "data-[placement=right]:aria-hidden:-translate-x-2 data-[placement=right]:translate-x-0",
-          "data-[placement=left]:aria-hidden:translate-x-2 data-[placement=left]:translate-x-0",
-          "aria-hidden:opacity-0 opacity-100",
+          "duration-100 transition ease-in transform",
+          "data-[placement=top]:translate-y-0 data-[placement=top]:aria-hidden:translate-y-2",
+          "data-[placement=bottom]:translate-y-0 data-[placement=bottom]:aria-hidden:-translate-y-2",
+          "data-[placement=right]:translate-x-0 data-[placement=right]:aria-hidden:-translate-x-2",
+          "data-[placement=left]:translate-x-0 data-[placement=left]:aria-hidden:translate-x-2",
+          "opacity-100 aria-hidden:opacity-0",
+          "aria-hidden:pointer-events-none",
+          "invisible not-aria-hidden:visible",
           "z-50 w-fit rounded-md px-3 py-1.5 text-sm text-balance",
-          "hidden not-aria-hidden:block",
-          # "animate-in zoom-in-95 fade-in-0",
-          # "data-[placement=top]:text-xl",
-          # "aria-hidden:animate-out aria-hidden:fade-out-0 aria-hidden:zoom-out-95",
-          # "data-[placement=bottom]:slide-in-from-top data-[placement=left]:slide-in-from-right data-[placement=right]:slide-in-from-left data-[placement=top]:slide-in-from-bottom",
-          # "origin-(--radix-tooltip-content-transform-origin) data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
           @class
         ]}
       >
