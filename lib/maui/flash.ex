@@ -1,6 +1,23 @@
 defmodule Maui.Flash do
   use Phoenix.LiveComponent
 
+  defmodule Message do
+    defstruct id: nil,
+              icon: nil,
+              message: nil,
+              type: :info,
+              duration: 5,
+              auto_dismiss: true,
+              dismissable: true
+
+    def new(message \\ "") do
+      %__MODULE__{
+        id: "fl#{System.unique_integer()}",
+        message: message
+      }
+    end
+  end
+
   @default_container_id "flash-container"
   @default_position "top-right"
   @default_limit 5

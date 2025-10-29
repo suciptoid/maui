@@ -11,3 +11,5 @@ export const Hooks = {
   "Maui.Tooltip": Tooltip,
   "Maui.FlashGroup": FlashGroup,
 };
+
+export { Popover, Select, LoadingBar, Tooltip, FlashGroup };

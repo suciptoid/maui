@@ -22,15 +22,13 @@ export default class Popover extends ViewHook {
     // Initialize trigger and popup elements
     this.trigger = this.el.querySelector("[aria-haspopup],[role='combobox']");
     this.popup = this.el.querySelector("[role='menu'],[role='listbox']");
-    this.search = this.el.querySelector("input[type='text'][role='combobox']");
 
     this.placement = this.el.dataset.placement || this.placement;
     this.strategy = this.el.dataset.strategy || this.strategy;
     this.event_trigger = this.el.dataset.trigger || this.event_trigger;
 
-    this.items = this.popup.querySelectorAll(
-      "[role='option'],[role='menuitem']",
-    );
+    this.items =
+      this.popup?.querySelectorAll("[role='option'],[role='menuitem']") ?? [];
 
     this.refreshExpanded();
 
@@ -76,9 +74,6 @@ export default class Popover extends ViewHook {
       this.handleTriggerKeyDown.bind(this),
     );
 
-    // Search input handler
-    this.search?.addEventListener("input", this.handleSearchInput.bind(this));
-
     // Click outside
     this.#outside_listener = document.addEventListener("click", (event) => {
       if (!this.el.contains(event.target)) {
@@ -102,18 +97,6 @@ export default class Popover extends ViewHook {
     if (this.#clear_floating) {
       this.#clear_floating();
     }
-  }
-
-  handleSearchInput(event) {
-    const query = event.target.value.toLowerCase();
-    this.currentIndex = -1;
-    this.items.forEach((item) => {
-      const itemText = (item.dataset.label || item.textContent)
-        .trim()
-        .toLowerCase();
-      const matches = itemText.includes(query);
-      item.setAttribute("aria-hidden", String(!matches));
-    });
   }
 
   handleTriggerKeyDown(event) {
@@ -143,22 +126,17 @@ export default class Popover extends ViewHook {
         this.handleArrowNavigation(event);
         break;
       case "Enter":
-        if (this.currentIndex >= 0) {
-          const visibleItems = Array.from(this.items).filter(
-            (item) => item.style.display !== "none",
-          );
-          const currentItem = visibleItems[this.currentIndex];
-          if (currentItem) {
-            // event.preventDefault();
-            // currentItem.click();
-            // this.toggle(false);
-          }
-        }
+        this.handleKeyEnter(event);
+
         break;
       case "Tab":
         this.closePopover();
         break;
     }
+  }
+
+  handleKeyEnter(event) {
+    // see select.js for example
   }
 
   handleArrowNavigation(event) {

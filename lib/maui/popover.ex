@@ -100,7 +100,7 @@ defmodule Maui.Popover do
       >
         {render_slot(@tooltip)}
 
-        <div data-arrow class="absolute bg-foreground fill-foreground z-50 size-2.5 rotate-45 rounded-[2px]">
+        <div data-arrow class="absolute bg-foreground fill-foreground z-[-1] size-2.5 rotate-45 rounded-[2px]">
         </div>
 
       </div>
