@@ -24,6 +24,8 @@ export default class Tooltip extends ViewHook {
     this.arrow = this.el.querySelector(
       ':scope > [role="tooltip"] > [data-arrow]',
     );
+    // this attribute controlled on client side, prevent liveview patching this attr
+    this.js().ignoreAttributes(this.tooltip, ["aria-*", "data-*", "style"]);
 
     this.placement = this.el.dataset.placement || this.placement;
     this.delay = this.el.dataset.delay || this.delay;
