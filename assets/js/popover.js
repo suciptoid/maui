@@ -74,14 +74,21 @@ export default class Popover extends ViewHook {
       this.handleTriggerKeyDown.bind(this),
     );
 
-    // Click outside
-    this.#outside_listener = document.addEventListener("click", (event) => {
-      if (!this.el.contains(event.target)) {
+    this.#outside_listener = (event) => {
+      if (!this.el.contains(event.target) && this.expanded) {
         this.closePopover();
       }
-    });
+    };
 
     this.initFloatingUI();
+  }
+
+  listenOutside() {
+    document.addEventListener("click", this.#outside_listener);
+  }
+
+  removeOutsideListener() {
+    document.removeEventListener("click", this.#outside_listener);
   }
 
   updated() {
@@ -90,9 +97,7 @@ export default class Popover extends ViewHook {
   }
 
   destroyed() {
-    if (this.#outside_listener) {
-      this.#outside_listener();
-    }
+    document.removeEventListener("click", this.#outside_listener);
 
     if (this.#clear_floating) {
       this.#clear_floating();
@@ -173,19 +178,9 @@ export default class Popover extends ViewHook {
     visibleItems.forEach((item, index) => {
       if (index === newIndex) {
         item.setAttribute("aria-selected", "true");
-        if (!this.search || true) {
-          // use another dataset for active state
-          item.setAttribute("tabindex", "0");
-          item.focus();
-        }
-        // item.setAttribute("data-highlighted", "true");
         item.scrollIntoView({ block: "nearest" });
       } else {
         item.removeAttribute("aria-selected");
-        // item.removeAttribute("data-highlighted");
-        if (!this.search || true) {
-          item.setAttribute("tabindex", "-1");
-        }
       }
     });
 
@@ -222,23 +217,24 @@ export default class Popover extends ViewHook {
     this.trigger?.setAttribute("aria-expanded", "false");
     this.popup?.setAttribute("aria-hidden", "true");
 
-    if (this.search) {
-      this.search.value = "";
-    }
-
     this.expanded = false;
     this.currentIndex = -1;
+
+    this.removeOutsideListener();
+    this.onPopupClosed();
+  }
+
+  onPopupClosed() {
+    this.trigger?.focus();
   }
 
   openPopover() {
     this.trigger?.setAttribute("aria-expanded", "true");
     this.popup?.setAttribute("aria-hidden", "false");
 
-    if (this.search) {
-      this.search.focus();
-    }
-
     this.expanded = true;
+
+    this.listenOutside();
   }
 
   log(msg, data) {
