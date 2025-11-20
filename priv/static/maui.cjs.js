@@ -1483,21 +1483,25 @@ var Popover = class extends import_phoenix_live_view.ViewHook {
       "keydown",
       this.handleTriggerKeyDown.bind(this)
     );
-    this.#outside_listener = document.addEventListener("click", (event) => {
-      if (!this.el.contains(event.target)) {
+    this.#outside_listener = (event) => {
+      if (!this.el.contains(event.target) && this.expanded) {
         this.closePopover();
       }
-    });
+    };
     this.initFloatingUI();
+  }
+  listenOutside() {
+    document.addEventListener("click", this.#outside_listener);
+  }
+  removeOutsideListener() {
+    document.removeEventListener("click", this.#outside_listener);
   }
   updated() {
     this.restoreExpanded();
     this.refreshFloatingUI();
   }
   destroyed() {
-    if (this.#outside_listener) {
-      this.#outside_listener();
-    }
+    document.removeEventListener("click", this.#outside_listener);
     if (this.#clear_floating) {
       this.#clear_floating();
     }
@@ -1558,16 +1562,9 @@ var Popover = class extends import_phoenix_live_view.ViewHook {
     visibleItems.forEach((item, index) => {
       if (index === newIndex) {
         item.setAttribute("aria-selected", "true");
-        if (!this.search || true) {
-          item.setAttribute("tabindex", "0");
-          item.focus();
-        }
         item.scrollIntoView({ block: "nearest" });
       } else {
         item.removeAttribute("aria-selected");
-        if (!this.search || true) {
-          item.setAttribute("tabindex", "-1");
-        }
       }
     });
     this.currentIndex = newIndex;
@@ -1599,19 +1596,19 @@ var Popover = class extends import_phoenix_live_view.ViewHook {
   closePopover() {
     this.trigger?.setAttribute("aria-expanded", "false");
     this.popup?.setAttribute("aria-hidden", "true");
-    if (this.search) {
-      this.search.value = "";
-    }
     this.expanded = false;
     this.currentIndex = -1;
+    this.removeOutsideListener();
+    this.onPopupClosed();
+  }
+  onPopupClosed() {
+    this.trigger?.focus();
   }
   openPopover() {
     this.trigger?.setAttribute("aria-expanded", "true");
     this.popup?.setAttribute("aria-hidden", "false");
-    if (this.search) {
-      this.search.focus();
-    }
     this.expanded = true;
+    this.listenOutside();
   }
   log(msg, data) {
     console.log(`${this.name}: ${msg}`, data);
@@ -1630,13 +1627,72 @@ var Popover = class extends import_phoenix_live_view.ViewHook {
 
 // js/select.js
 var Select = class extends Popover {
+  placement = "bottom-start";
+  #searchInputHandler;
   mounted() {
     this.name = "select";
     super.mounted();
     this.search = this.el.querySelector("input[type='text'][role='combobox']");
-    this.search?.addEventListener("input", this.handleSearchInput.bind(this));
+    this.hiddenInput = this.el.querySelector("input[type='hidden']");
+    this.popup.addEventListener("click", this.handlePopupClick.bind(this));
+    this.#searchInputHandler = this.handleSearchInput.bind(this);
+    this.selectDefaultValue();
+  }
+  updated() {
+    super.updated();
+    this.selectDefaultValue();
+  }
+  selectDefaultValue() {
+    const defaultValue = this.el.dataset.value;
+    if (defaultValue) {
+      const defaultItem = Array.from(this.items).find(
+        (item) => item.dataset.value === defaultValue
+      );
+      if (defaultItem) {
+        this.selectItem(defaultItem);
+      }
+    }
+  }
+  selectItem(itemEl) {
+    if (this.hiddenInput) {
+      if (itemEl.dataset.value) {
+        this.hiddenInput.value = itemEl.dataset.value;
+        this.hiddenInput.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+    }
+    this.updatePlaceholder();
+    this.closePopover();
+  }
+  updatePlaceholder() {
+    const items = Array.from(this.items).find(
+      (item) => item.dataset.value === this.hiddenInput.value
+    );
+    this.placeholder = items ? items.textContent : "";
+    const label = this.el.querySelector(`[data-maui="selected-label"]`);
+    if (label) {
+      label.textContent = items ? items.textContent : "";
+    }
+  }
+  handlePopupClick(event) {
+    const item = event.target?.closest("[role='menuitem']");
+    if (item && this.popup.contains(item)) {
+      this.selectItem(item);
+    }
+  }
+  handleKeyEnter(event) {
+    event.preventDefault();
+    if (this.currentIndex >= 0) {
+      const visibleItems = Array.from(this.items).filter(
+        (item) => item.getAttribute("aria-hidden") !== "true"
+      );
+      const currentItem = visibleItems[this.currentIndex];
+      if (currentItem) {
+        this.selectItem(currentItem);
+      }
+    }
   }
   handleSearchInput(event) {
+    event.stopPropagation();
     const query = event.target.value.toLowerCase();
     this.currentIndex = -1;
     this.items.forEach((item) => {
@@ -1644,6 +1700,34 @@ var Select = class extends Popover {
       const matches = itemText.includes(query);
       item.setAttribute("aria-hidden", String(!matches));
     });
+  }
+  clearSearch() {
+    this.search.value = "";
+    this.items.forEach((item) => {
+      item.removeAttribute("aria-hidden");
+    });
+  }
+  // @override
+  onPopupClosed() {
+    super.onPopupClosed();
+    if (this.search) {
+      this.clearSearch();
+    }
+  }
+  // @override
+  openPopover() {
+    super.openPopover();
+    if (this.search) {
+      this.search.focus();
+      this.search.addEventListener("input", this.#searchInputHandler);
+    }
+  }
+  // @override
+  closePopover() {
+    super.closePopover();
+    if (this.search) {
+      this.search.removeEventListener("input", this.#searchInputHandler);
+    }
   }
 };
 
@@ -1748,6 +1832,7 @@ var Tooltip = class extends import_phoenix_live_view3.ViewHook {
     this.arrow = this.el.querySelector(
       ':scope > [role="tooltip"] > [data-arrow]'
     );
+    this.js().ignoreAttributes(this.tooltip, ["aria-*", "data-*", "style"]);
     this.placement = this.el.dataset.placement || this.placement;
     this.delay = this.el.dataset.delay || this.delay;
     this.#clear_floating = autoUpdate(this.trigger, this.tooltip, () => {
