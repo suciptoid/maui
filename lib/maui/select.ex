@@ -8,35 +8,16 @@ defmodule Maui.Select do
   attr :options, :list, default: []
   attr :searchable, :boolean, default: false
   attr :class, :string, default: "w-fit"
-  attr :container_class, :string, default: nil
 
   slot :inner_block
   slot :header
   slot :footer
 
   def select(%{options: options} = assigns) when options != [] do
-    assigns = assign(assigns, options: normalize_options(options))
-
-    selected = assigns[:value]
-
-    placeholder =
-      if selected && selected != "" do
-        # search flattened options for a pair matching the selected value
-        case Enum.find(assigns.options, fn
-               {:group, _} -> false
-               {v, _label} -> v == to_string(selected)
-             end) do
-          nil -> assigns[:placeholder]
-          {_v, label} -> label
-        end
-      else
-        assigns[:placeholder]
-      end
-
-    assigns = assign(assigns, placeholder: placeholder)
+    assigns = assign(assigns, options: normalize_options(options)) |> map_placeholder()
 
     ~H"""
-    <.select id={@id} name={@name} value={@value} placeholder={@placeholder} searchable={@searchable}>
+    <.select id={@id} name={@name} class={@class} value={@value} placeholder={@placeholder} searchable={@searchable}>
       <%= for opt <- @options do %>
         <%= case opt do %>
           <% {:group, group_label} -> %>
@@ -222,5 +203,25 @@ defmodule Maui.Select do
   defp normalize_single(item) do
     s = to_string(item)
     {s, s}
+  end
+
+  defp map_placeholder(assigns) do
+    selected = assigns[:value]
+
+    placeholder =
+      if selected && selected != "" do
+        # search flattened options for a pair matching the selected value
+        case Enum.find(assigns.options, fn
+               {:group, _} -> false
+               {v, _label} -> v == to_string(selected)
+             end) do
+          nil -> assigns[:placeholder]
+          {_v, label} -> label
+        end
+      else
+        assigns[:placeholder]
+      end
+
+    assign(assigns, placeholder: placeholder)
   end
 end

@@ -5,6 +5,7 @@ import {
   flip,
   shift,
   autoUpdate,
+  size,
 } from "@floating-ui/dom";
 
 export default class Popover extends ViewHook {
@@ -14,6 +15,7 @@ export default class Popover extends ViewHook {
   strategy = "absolute"; // floating-ui strategy
   event_trigger = "click"; // "click" | "hover" | "focus"
   currentIndex = -1;
+  expand_popover = false; // expand popover to match width of trigger
 
   #outside_listener;
   #clear_floating;
@@ -200,10 +202,23 @@ export default class Popover extends ViewHook {
   }
 
   refreshFloatingUI() {
+    const expand_popover = this.expand_popover;
+    const popup = this.popup;
     computePosition(this.trigger, this.popup, {
       placement: this.placement,
       strategy: this.strategy,
-      middleware: [offset(8), flip(), shift()],
+      middleware: [
+        offset(8),
+        flip(),
+        shift(),
+        size({
+          apply({ rects }) {
+            if (expand_popover) {
+              popup.style.width = `${rects.reference.width}px`;
+            }
+          },
+        }),
+      ],
     }).then(({ x, y, strategy }) => {
       Object.assign(this.popup.style, {
         left: `${x}px`,
