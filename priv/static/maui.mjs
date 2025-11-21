@@ -1535,7 +1535,10 @@ var Popover = class extends ViewHook {
       this.handleTriggerKeyDown.bind(this)
     );
     this.#outside_listener = (event) => {
-      if (!this.el.contains(event.target) && this.expanded) {
+      const target = event.target;
+      const clickedOnTrigger = this.trigger?.contains(target);
+      const clickedOnPopup = this.popup?.contains(target);
+      if (!clickedOnTrigger && !clickedOnPopup && this.expanded) {
         this.closePopover();
       }
     };
