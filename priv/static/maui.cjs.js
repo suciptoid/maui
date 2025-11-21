@@ -668,6 +668,84 @@ var shift = function(options) {
     }
   };
 };
+var size = function(options) {
+  if (options === void 0) {
+    options = {};
+  }
+  return {
+    name: "size",
+    options,
+    async fn(state) {
+      var _state$middlewareData, _state$middlewareData2;
+      const {
+        placement,
+        rects,
+        platform: platform2,
+        elements
+      } = state;
+      const {
+        apply = () => {
+        },
+        ...detectOverflowOptions
+      } = evaluate(options, state);
+      const overflow = await detectOverflow(state, detectOverflowOptions);
+      const side = getSide(placement);
+      const alignment = getAlignment(placement);
+      const isYAxis = getSideAxis(placement) === "y";
+      const {
+        width,
+        height
+      } = rects.floating;
+      let heightSide;
+      let widthSide;
+      if (side === "top" || side === "bottom") {
+        heightSide = side;
+        widthSide = alignment === (await (platform2.isRTL == null ? void 0 : platform2.isRTL(elements.floating)) ? "start" : "end") ? "left" : "right";
+      } else {
+        widthSide = side;
+        heightSide = alignment === "end" ? "top" : "bottom";
+      }
+      const maximumClippingHeight = height - overflow.top - overflow.bottom;
+      const maximumClippingWidth = width - overflow.left - overflow.right;
+      const overflowAvailableHeight = min(height - overflow[heightSide], maximumClippingHeight);
+      const overflowAvailableWidth = min(width - overflow[widthSide], maximumClippingWidth);
+      const noShift = !state.middlewareData.shift;
+      let availableHeight = overflowAvailableHeight;
+      let availableWidth = overflowAvailableWidth;
+      if ((_state$middlewareData = state.middlewareData.shift) != null && _state$middlewareData.enabled.x) {
+        availableWidth = maximumClippingWidth;
+      }
+      if ((_state$middlewareData2 = state.middlewareData.shift) != null && _state$middlewareData2.enabled.y) {
+        availableHeight = maximumClippingHeight;
+      }
+      if (noShift && !alignment) {
+        const xMin = max(overflow.left, 0);
+        const xMax = max(overflow.right, 0);
+        const yMin = max(overflow.top, 0);
+        const yMax = max(overflow.bottom, 0);
+        if (isYAxis) {
+          availableWidth = width - 2 * (xMin !== 0 || xMax !== 0 ? xMin + xMax : max(overflow.left, overflow.right));
+        } else {
+          availableHeight = height - 2 * (yMin !== 0 || yMax !== 0 ? yMin + yMax : max(overflow.top, overflow.bottom));
+        }
+      }
+      await apply({
+        ...state,
+        availableWidth,
+        availableHeight
+      });
+      const nextDimensions = await platform2.getDimensions(elements.floating);
+      if (width !== nextDimensions.width || height !== nextDimensions.height) {
+        return {
+          reset: {
+            rects: true
+          }
+        };
+      }
+      return {};
+    }
+  };
+};
 
 // node_modules/@floating-ui/utils/dist/floating-ui.utils.dom.mjs
 function hasWindow() {
@@ -1413,6 +1491,7 @@ function autoUpdate(reference, floating, update, options) {
 var offset2 = offset;
 var shift2 = shift;
 var flip2 = flip;
+var size2 = size;
 var arrow2 = arrow;
 var computePosition2 = (reference, floating, options) => {
   const cache = /* @__PURE__ */ new Map();
@@ -1440,6 +1519,8 @@ var Popover = class extends import_phoenix_live_view.ViewHook {
   event_trigger = "click";
   // "click" | "hover" | "focus"
   currentIndex = -1;
+  expand_popover = false;
+  // expand popover to match width of trigger
   #outside_listener;
   #clear_floating;
   mounted() {
@@ -1484,7 +1565,10 @@ var Popover = class extends import_phoenix_live_view.ViewHook {
       this.handleTriggerKeyDown.bind(this)
     );
     this.#outside_listener = (event) => {
-      if (!this.el.contains(event.target) && this.expanded) {
+      const target = event.target;
+      const clickedOnTrigger = this.trigger?.contains(target);
+      const clickedOnPopup = this.popup?.contains(target);
+      if (!clickedOnTrigger && !clickedOnPopup && this.expanded) {
         this.closePopover();
       }
     };
@@ -1581,10 +1665,23 @@ var Popover = class extends import_phoenix_live_view.ViewHook {
     });
   }
   refreshFloatingUI() {
+    const expand_popover = this.expand_popover;
+    const popup = this.popup;
     computePosition2(this.trigger, this.popup, {
       placement: this.placement,
       strategy: this.strategy,
-      middleware: [offset2(8), flip2(), shift2()]
+      middleware: [
+        offset2(8),
+        flip2(),
+        shift2(),
+        size2({
+          apply({ rects }) {
+            if (expand_popover) {
+              popup.style.width = `${rects.reference.width}px`;
+            }
+          }
+        })
+      ]
     }).then(({ x, y, strategy }) => {
       Object.assign(this.popup.style, {
         left: `${x}px`,
@@ -1628,6 +1725,7 @@ var Popover = class extends import_phoenix_live_view.ViewHook {
 // js/select.js
 var Select = class extends Popover {
   placement = "bottom-start";
+  expand_popover = true;
   #searchInputHandler;
   mounted() {
     this.name = "select";
