@@ -166,10 +166,18 @@ defmodule AppWeb.Layouts do
 
               <.sidebar_link
                 patch={~p"/tab"}
-                active={@live_action == :toast}
+                active={@live_action == :tab}
                 icon="hero-bell"
               >
                 Tabs Demo
+              </.sidebar_link>
+
+              <.sidebar_link
+                patch={~p"/container"}
+                active={@live_action == :container}
+                icon="hero-square-2-stack"
+              >
+                Container
               </.sidebar_link>
             </div>
           </nav>
@@ -241,6 +249,7 @@ defmodule AppWeb.Layouts do
   defp page_title(:select), do: "Select"
   defp page_title(:popover), do: "Popover"
   defp page_title(:toast), do: "Toast"
+  defp page_title(:container), do: "Container"
   defp page_title(_), do: "Components"
 
   @doc """

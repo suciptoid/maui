@@ -26,6 +26,7 @@ defmodule AppWeb.Router do
     live "/flash", Live.Demo, :toast
     live "/alert", Live.Demo, :alert
     live "/select", Live.DemoSelect, :select
+    live "/container", Live.DemoContainer, :container
     live "/link/:any", Live.Demo, :index
     live "/tab/:tab", Live.DemoTab
     live "/tab", Live.DemoTab, :index
