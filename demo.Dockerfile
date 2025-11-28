@@ -36,14 +36,14 @@ RUN mix local.hex --force \
 ENV MIX_ENV="prod"
 
 # install mix dependencies
-COPY demo/mix.exs mix.lock ./
+COPY demo/mix.exs demo/mix.lock ./
 RUN mix deps.get --only $MIX_ENV
 RUN mkdir config
 
 # copy compile-time config files before we compile dependencies
 # to ensure any relevant config change will trigger the dependencies
 # to be re-compiled.
-COPY demo/config/config.exs config/${MIX_ENV}.exs config/
+COPY demo/config/config.exs demo/config/${MIX_ENV}.exs config/
 RUN mix deps.compile
 
 RUN mix assets.setup
