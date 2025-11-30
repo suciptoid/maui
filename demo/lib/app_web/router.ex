@@ -21,6 +21,7 @@ defmodule AppWeb.Router do
     live "/inputs", Live.Demo, :inputs
     live "/buttons", Live.Demo, :buttons
     live "/dropdown", Live.Demo, :dropdown
+    live "/dialog", Live.DemoDialog, :dialog
     live "/popover", Live.DemoPopover, :popover
     live "/toast", Live.Demo, :toast
     live "/flash", Live.Demo, :toast
