@@ -145,7 +145,7 @@ defmodule AppWeb.Layouts do
                 active={@live_action == :select}
                 icon="hero-chevron-down"
               >
-              Select
+                Select
               </.sidebar_link>
 
               <.sidebar_link
@@ -178,6 +178,14 @@ defmodule AppWeb.Layouts do
                 icon="hero-square-2-stack"
               >
                 Container
+              </.sidebar_link>
+
+              <.sidebar_link
+                patch={~p"/dialog"}
+                active={@live_action == :dialog}
+                icon="hero-window"
+              >
+                Dialog
               </.sidebar_link>
             </div>
           </nav>
@@ -250,6 +258,7 @@ defmodule AppWeb.Layouts do
   defp page_title(:popover), do: "Popover"
   defp page_title(:toast), do: "Toast"
   defp page_title(:container), do: "Container"
+  defp page_title(:dialog), do: "Dialog"
   defp page_title(_), do: "Components"
 
   @doc """
