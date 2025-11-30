@@ -108,6 +108,7 @@ defmodule Maui.Dialog do
   def hide_dialog(id) do
     JS.set_attribute({"hidden", true}, to: "##{id}-backdrop")
     |> JS.set_attribute({"hidden", true}, to: "##{id}-content")
+    |> JS.remove_class("overflow-hidden", to: "body")
     |> JS.pop_focus()
   end
 
@@ -115,6 +116,7 @@ defmodule Maui.Dialog do
     JS.push_focus()
     |> JS.remove_attribute("hidden", to: "##{id}-backdrop")
     |> JS.remove_attribute("hidden", to: "##{id}-content")
+    |> JS.add_class("overflow-hidden", to: "body")
     |> JS.focus_first(to: "##{id}-content")
   end
 end
