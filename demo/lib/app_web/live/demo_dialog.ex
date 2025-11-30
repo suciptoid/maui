@@ -8,10 +8,16 @@ defmodule AppWeb.Live.DemoDialog do
       <!-- Basic Dialog -->
       <div class="mb-12">
         <h2 class="text-xl font-semibold mb-4">Basic Dialog</h2>
-        <p class="text-gray-600 mb-4">A simple dialog with form elements for collecting user input.</p>
+        <p class="text-gray-600 mb-4">
+          A simple dialog with form elements for collecting user input.
+        </p>
 
         <div class="flex items-center gap-3 mb-4">
-          <.dialog :let={%{hide: dialog_hide}} id="x">
+          <.dialog
+            :let={%{hide: dialog_hide}}
+            id="x"
+            on_cancel={Phoenix.LiveView.JS.toggle_attribute({"data-canceled", "true", "false"})}
+          >
             <:trigger :let={dialog_attr}>
               <.button variant="secondary" type="button" {dialog_attr}>
                 Open Dialog
@@ -56,11 +62,13 @@ defmodule AppWeb.Live.DemoDialog do
           %></code></pre>
         </div>
       </div>
-
-      <!-- Destructive Dialog -->
+      
+    <!-- Destructive Dialog -->
       <div class="mb-12">
         <h2 class="text-xl font-semibold mb-4">Destructive Dialog</h2>
-        <p class="text-gray-600 mb-4">A dialog designed for destructive actions with warning styling and confirmation.</p>
+        <p class="text-gray-600 mb-4">
+          A dialog designed for destructive actions with warning styling and confirmation.
+        </p>
 
         <div class="flex items-center gap-3 mb-4">
           <.dialog :let={%{hide: dialog_destroy_hide}} size="sm" id="destroy">
@@ -106,11 +114,13 @@ defmodule AppWeb.Live.DemoDialog do
           %></code></pre>
         </div>
       </div>
-
-      <!-- Notify Dialog -->
+      
+    <!-- Notify Dialog -->
       <div class="mb-12">
         <h2 class="text-xl font-semibold mb-4">Notify Dialog</h2>
-        <p class="text-gray-600 mb-4">A dialog for showing notifications or status updates to the user.</p>
+        <p class="text-gray-600 mb-4">
+          A dialog for showing notifications or status updates to the user.
+        </p>
 
         <div class="flex items-center gap-3 mb-4">
           <.dialog :let={%{hide: dialog_notify_hide}} id="notify">
@@ -155,11 +165,13 @@ defmodule AppWeb.Live.DemoDialog do
           %></code></pre>
         </div>
       </div>
-
-      <!-- Alert Dialog -->
+      
+    <!-- Alert Dialog -->
       <div class="mb-12">
         <h2 class="text-xl font-semibold mb-4">Alert Dialog</h2>
-        <p class="text-gray-600 mb-4">An alert dialog with a destructive action, suitable for confirming critical operations.</p>
+        <p class="text-gray-600 mb-4">
+          An alert dialog with a destructive action, suitable for confirming critical operations.
+        </p>
 
         <div class="flex items-center gap-3 mb-4">
           <.dialog :let={%{hide: dialog_alert_hide}} alert={true} id="alert-dialog">
@@ -211,11 +223,13 @@ defmodule AppWeb.Live.DemoDialog do
           %></code></pre>
         </div>
       </div>
-
-      <!-- Nested Dialog -->
+      
+    <!-- Nested Dialog -->
       <div class="mb-12">
         <h2 class="text-xl font-semibold mb-4">Nested Dialog</h2>
-        <p class="text-gray-600 mb-4">A dialog that contains another dialog, demonstrating how to handle nested modal interactions.</p>
+        <p class="text-gray-600 mb-4">
+          A dialog that contains another dialog, demonstrating how to handle nested modal interactions.
+        </p>
 
         <div class="flex items-center gap-3 mb-4">
           <.dialog :let={%{hide: dialog_nested_hide}} alert={true} id="nested-dialog">
@@ -303,11 +317,13 @@ defmodule AppWeb.Live.DemoDialog do
           %></code></pre>
         </div>
       </div>
-
-      <!-- Custom Content Dialog -->
+      
+    <!-- Custom Content Dialog -->
       <div class="mb-12">
         <h2 class="text-xl font-semibold mb-4">Custom Content Dialog</h2>
-        <p class="text-gray-600 mb-4">A dialog using the custom content slot for complete control over the dialog structure and styling.</p>
+        <p class="text-gray-600 mb-4">
+          A dialog using the custom content slot for complete control over the dialog structure and styling.
+        </p>
 
         <div class="flex items-center gap-3 mb-4">
           <.dialog :let={%{hide: dialog_custom_hide}} alert={false} id="alert-custom-content">
@@ -344,7 +360,7 @@ defmodule AppWeb.Live.DemoDialog do
         </div>
 
         <div class="bg-gray-50 p-4 rounded-lg">
-          <pre class="text-sm"><code><%=
+          <pre class="text-sm overflow-y-auto"><code><%=
             "<.dialog :let={%{hide: hide}} alert={false} id=\"alert-custom-content\">\n" <>
             "  <:trigger :let={attr}>\n" <>
             "    <.button variant=\"secondary\" type=\"button\" {attr}>\n" <>

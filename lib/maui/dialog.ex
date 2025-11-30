@@ -65,25 +65,26 @@ defmodule Maui.Dialog do
 
     ~H"""
     <div
-      phx-window-keydown={hide_dialog(@id)}
+      id={@id}
+      phx-window-keydown={JS.exec("data-cancel")}
       phx-key="escape"
       phx-remove={hide_dialog(@id)}
       data-cancel={JS.exec(@on_cancel, "phx-remove")}
     >
       {render_slot(@trigger, %{
-        "phx-click": show_dialog(@id),
-        "data-trigger-for": @id
+        "phx-click": show_dialog(@id)
       })}
       <.backdrop
         id={"#{@id}-backdrop"}
         hidden
-        phx-click={if @alert, do: nil, else: hide_dialog(@id)}
+        phx-click={if @alert, do: nil, else: JS.exec("data-cancel", to: "##{@id}")}
       />
 
       <%= if @content != [] do %>
         {render_slot(
           @content,
-          {%{id: "#{@id}-content", hidden: true}, %{hide: hide_dialog(@id), show: show_dialog(@id)}}
+          {%{id: "#{@id}-content", hidden: true},
+           %{hide: JS.exec("data-cancel", to: "##{@id}"), show: show_dialog(@id)}}
         )}
       <% end %>
 
@@ -95,7 +96,10 @@ defmodule Maui.Dialog do
         id={"#{@id}-content"}
         hidden
       >
-        {render_slot(@inner_block, %{hide: hide_dialog(@id), show: show_dialog(@id)})}
+        {render_slot(@inner_block, %{
+          hide: JS.exec("data-cancel", to: "##{@id}"),
+          show: show_dialog(@id)
+        })}
       </.content>
     </div>
     """
@@ -104,11 +108,12 @@ defmodule Maui.Dialog do
   def hide_dialog(id) do
     JS.set_attribute({"hidden", true}, to: "##{id}-backdrop")
     |> JS.set_attribute({"hidden", true}, to: "##{id}-content")
-    |> JS.focus(to: "[data-trigger-for='#{id}']")
+    |> JS.pop_focus()
   end
 
   def show_dialog(id) do
-    JS.remove_attribute("hidden", to: "##{id}-backdrop")
+    JS.push_focus()
+    |> JS.remove_attribute("hidden", to: "##{id}-backdrop")
     |> JS.remove_attribute("hidden", to: "##{id}-content")
     |> JS.focus_first(to: "##{id}-content")
   end
