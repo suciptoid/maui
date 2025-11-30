@@ -95,8 +95,8 @@ defmodule AppWeb.Layouts do
         <div class="flex h-full flex-col">
           <%!-- Logo/Header --%>
           <div class="flex items-center gap-2 border-b border-border px-6 py-4">
-            <img src={~p"/images/logo.svg"} width="32" />
-            <span class="text-lg font-semibold">Maui Components</span>
+            <img src={~p"/images/maui-hook-2d.png"} width="40" />
+            <span class="text-lg font-semibold">Maui </span>
           </div>
 
           <%!-- Navigation --%>
