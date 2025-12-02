@@ -30,7 +30,6 @@ defmodule AppWeb.Live.DemoSelect do
   def render(assigns) do
     ~H"""
     <Layouts.docs flash={@flash} live_action={@live_action}>
-      <h1>Demo Select</h1>
       <.form
         :let={f}
         for={@form}
@@ -38,7 +37,7 @@ defmodule AppWeb.Live.DemoSelect do
         phx-submit="submit"
         class="grid grid-cols-2 gap-2"
       >
-        <.select id="select-dmeo" name="select-comp">
+        <.select label="Select Food" id="select-dmeo" name="select-comp">
           <.select_item value="makan-value">
             <.icon name="hero-arrow-path" class="size-4" /> Makan
           </.select_item>
@@ -46,7 +45,7 @@ defmodule AppWeb.Live.DemoSelect do
             <.icon name="hero-check" class="size-4" /> Makan Dua
           </.select_item>
         </.select>
-        <.select id="select-dmeo-2" name="select-comp-2">
+        <.select label="Select Drink" id="select-dmeo-2" name="select-comp-2">
           <.select_item value="minum-value">
             <.icon name="hero-arrow-path" class="size-4" /> Minum
           </.select_item>
@@ -55,6 +54,7 @@ defmodule AppWeb.Live.DemoSelect do
           </.select_item>
         </.select>
         <.select
+        label="Select with options"
           id="with-options"
           name="with-options"
           placeholder="Select with @options"
@@ -62,6 +62,7 @@ defmodule AppWeb.Live.DemoSelect do
           options={["Option 1", "Option 2"]}
         />
         <.select
+        label="Select with default"
           id="with-default-value"
           name="with-default-value"
           placeholder="Select with default"
@@ -70,12 +71,14 @@ defmodule AppWeb.Live.DemoSelect do
           options={["Option 1", "Option 2", "Option 3"]}
         />
         <.select
+        label="Select from strings"
           id="with-options-strings"
           name="with-options-strings"
           placeholder="Select from strings"
           options={["Option A", "Option B", "Option C"]}
         />
         <.select
+        label="Select from tuples"
           id="with-options-tuples"
           name="with-options-tuples"
           placeholder="Select from tuples"
@@ -83,6 +86,7 @@ defmodule AppWeb.Live.DemoSelect do
         />
         <.select
           id="with-options-groups"
+          label="Select grouped"
           name="with-options-groups"
           placeholder="Select grouped"
           value="carrot"
@@ -95,6 +99,7 @@ defmodule AppWeb.Live.DemoSelect do
         />
         <.select
           id="with-options-ints"
+          label="Select numbers"
           name="with-options-ints"
           placeholder="Select numbers"
           value="1"

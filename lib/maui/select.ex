@@ -1,5 +1,6 @@
 defmodule Maui.Select do
   use Phoenix.Component
+  import Maui.Input, only: [label: 1]
 
   attr :id, :string, default: nil
   attr :name, :string, default: nil
@@ -8,16 +9,43 @@ defmodule Maui.Select do
   attr :options, :list, default: []
   attr :searchable, :boolean, default: false
   attr :class, :string, default: "w-fit"
+  attr :label, :string, default: nil
+
+  attr :field, Phoenix.HTML.FormField,
+    default: nil,
+    doc: "a form field struct retrieved from the form, for example: @form[:email]"
 
   slot :inner_block
   slot :header
   slot :footer
 
-  def select(%{options: options} = assigns) when options != [] do
-    assigns = assign(assigns, options: normalize_options(options)) |> map_placeholder()
+  def select(%{label: label} = assigns) when label not in ["", nil] do
+    assigns = map_field(assigns)
 
     ~H"""
-    <.select id={@id} name={@name} class={@class} value={@value} placeholder={@placeholder} searchable={@searchable}>
+    <div class="grid w-full items-center gap-3">
+      <.label for={@id}>{@label}</.label>
+      <.select {assigns |> Map.delete(:label)} />
+    </div>
+    """
+  end
+
+  def select(%{options: options} = assigns) when options != [] do
+    assigns =
+      assigns
+      |> map_field()
+      |> assign(options: normalize_options(options))
+      |> map_placeholder()
+
+    ~H"""
+    <.select
+      id={@id}
+      name={@name}
+      class={@class}
+      value={@value}
+      placeholder={@placeholder}
+      searchable={@searchable}
+    >
       <%= for opt <- @options do %>
         <%= case opt do %>
           <% {:group, group_label} -> %>
@@ -31,6 +59,8 @@ defmodule Maui.Select do
   end
 
   def select(assigns) do
+    assigns = map_field(assigns)
+
     ~H"""
     <div
       id={@id}
@@ -223,5 +253,17 @@ defmodule Maui.Select do
       end
 
     assign(assigns, placeholder: placeholder)
+  end
+
+  def map_field(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
+    assigns
+    |> assign(:id, assigns.id || field.id)
+    |> assign(:name, assigns.name || field.name)
+    |> assign(:value, assigns.value || field.value)
+    |> assign(:field, nil)
+  end
+
+  def map_field(assigns) do
+    assigns
   end
 end
