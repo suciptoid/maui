@@ -3,7 +3,7 @@ defmodule AppWeb.Live.Demo do
   use Maui
 
   def mount(_params, _session, socket) do
-    form = to_form(%{"name" => "John Doe", "email" => "john@example.com"})
+    form = to_form(%{"name" => "John Doe", "email" => "john@example.com", "text" => "text demo"})
     {:ok, socket |> assign(form: form) |> assign(:flash_placement, "top-right")}
   end
 
@@ -329,8 +329,7 @@ defmodule AppWeb.Live.Demo do
             </.form>
           </div>
           <div class="flex justify-end flex-col">
-            <p class="text-xs text-gray-400 p-1">Textarea</p>
-            <.textarea placeholder="Enter text..." value="xx" name="text" id="custom-textarea" />
+            <.textarea label="Textarea" placeholder="Enter text..." field={@form[:text]} id="custom-textarea" />
           </div>
         </div>
       </div>

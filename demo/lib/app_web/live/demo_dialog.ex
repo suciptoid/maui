@@ -62,7 +62,7 @@ defmodule AppWeb.Live.DemoDialog do
           %></code></pre>
         </div>
       </div>
-      
+
     <!-- Destructive Dialog -->
       <div class="mb-12">
         <h2 class="text-xl font-semibold mb-4">Destructive Dialog</h2>
@@ -114,7 +114,7 @@ defmodule AppWeb.Live.DemoDialog do
           %></code></pre>
         </div>
       </div>
-      
+
     <!-- Notify Dialog -->
       <div class="mb-12">
         <h2 class="text-xl font-semibold mb-4">Notify Dialog</h2>
@@ -165,7 +165,7 @@ defmodule AppWeb.Live.DemoDialog do
           %></code></pre>
         </div>
       </div>
-      
+
     <!-- Alert Dialog -->
       <div class="mb-12">
         <h2 class="text-xl font-semibold mb-4">Alert Dialog</h2>
@@ -223,7 +223,7 @@ defmodule AppWeb.Live.DemoDialog do
           %></code></pre>
         </div>
       </div>
-      
+
     <!-- Nested Dialog -->
       <div class="mb-12">
         <h2 class="text-xl font-semibold mb-4">Nested Dialog</h2>
@@ -317,7 +317,7 @@ defmodule AppWeb.Live.DemoDialog do
           %></code></pre>
         </div>
       </div>
-      
+
     <!-- Custom Content Dialog -->
       <div class="mb-12">
         <h2 class="text-xl font-semibold mb-4">Custom Content Dialog</h2>
@@ -326,7 +326,7 @@ defmodule AppWeb.Live.DemoDialog do
         </p>
 
         <div class="flex items-center gap-3 mb-4">
-          <.dialog :let={%{hide: dialog_custom_hide}} alert={false} id="alert-custom-content">
+          <.dialog :let={%{hide: _}} alert={false} id="alert-custom-content">
             <:trigger :let={dialog_custom_attr}>
               <.button variant="secondary" type="button" {dialog_custom_attr}>
                 Custom Content

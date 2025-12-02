@@ -78,12 +78,12 @@ defmodule Maui.Input do
 
   def checkbox(%{label: label} = assigns) when label != nil do
     ~H"""
-      <label class="inline-flex items-center cursor-pointer">
-        <.checkbox id={@id} class={@class} field={@field} {@rest} />
-        <span class="text-sm text-foreground ms-3">
-          {@label}
-        </span>
-      </label>
+    <label class="inline-flex items-center cursor-pointer">
+      <.checkbox id={@id} class={@class} field={@field} {@rest} />
+      <span class="text-sm text-foreground ms-3">
+        {@label}
+      </span>
+    </label>
     """
   end
 
@@ -151,12 +151,12 @@ defmodule Maui.Input do
     assigns = map_field(assigns)
 
     ~H"""
-      <label class="inline-flex items-center cursor-pointer">
-        <.switch id={@id} class={@class} {@rest} />
-        <span class="text-sm text-foreground ms-3">
-          {@label}
-        </span>
-      </label>
+    <label class="inline-flex items-center cursor-pointer">
+      <.switch id={@id} class={@class} {@rest} />
+      <span class="text-sm text-foreground ms-3">
+        {@label}
+      </span>
+    </label>
     """
   end
 
@@ -190,6 +190,17 @@ defmodule Maui.Input do
     include: ~w(accept  capture cols disabled form list max maxlength min minlength
                 multiple pattern placeholder readonly required rows size step name value)
 
+  def textarea(%{label: label} = assigns) when label not in ["", nil] do
+    assigns = map_field(assigns)
+
+    ~H"""
+    <div class="grid w-full items-center gap-3">
+      <.label for={@id}>{@label}</.label>
+      <.textarea id={@id} class={@class} field={@field} {@rest} />
+    </div>
+    """
+  end
+
   def textarea(assigns) do
     assigns =
       map_field(assigns)
@@ -201,7 +212,8 @@ defmodule Maui.Input do
         "border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
         @class
       ]}
-      {@rest}>{@rest[:value]}</textarea>
+      {@rest}
+    >{@rest[:value]}</textarea>
     """
   end
 
