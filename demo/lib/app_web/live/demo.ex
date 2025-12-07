@@ -4,7 +4,7 @@ defmodule AppWeb.Live.Demo do
 
   def mount(_params, _session, socket) do
     form = to_form(%{"name" => "John Doe", "email" => "john@example.com", "text" => "text demo"})
-    {:ok, socket |> assign(form: form) |> assign(:flash_placement, "top-right")}
+    {:ok, socket |> assign(form: form) |> assign(:flash_placement, "top-center")}
   end
 
   def handle_params(_params, _uri, socket) do
@@ -18,14 +18,14 @@ defmodule AppWeb.Live.Demo do
 
   def handle_event("send_flash", _params, socket) do
     Maui.Flash.send_flash("Hi, I'm a flash message from #{socket.id}")
-    # assigns = %{}
+    assigns = %{}
 
-    # Maui.Flash.send_flash(~H"""
-    # <div class="flex flex-col items-center">
-    #   <span>Hello world</span>
-    #   <.button size="sm">click me</.button>
-    # </div>
-    # """)
+    Maui.Flash.send_flash(~H"""
+    <div class="flex flex-col">
+      <span>Hello world</span>
+      <.button size="sm">click me</.button>
+    </div>
+    """)
 
     {:noreply, socket}
   end

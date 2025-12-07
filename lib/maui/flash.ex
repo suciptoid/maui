@@ -19,7 +19,7 @@ defmodule Maui.Flash do
   end
 
   @default_container_id "flash-container"
-  @default_position "top-right"
+  @default_position "top-center"
   @default_limit 5
 
   def mount(socket) do
@@ -176,7 +176,7 @@ defmodule Maui.Flash do
       data-position={@position}
       class={[
         "bg-secondary text-secondary-foreground w-full text-sm group",
-        "min-w-[8rem] rounded-md border border-border py-3 px-4 shadow-sm",
+        "min-w-32 rounded-md border border-border py-3 px-4 shadow-sm",
         "transition-all duration-400 opacity-0",
         "absolute left-0 right-0 data-[position^='top-']:top-0 data-[position^='bottom-']:bottom-0",
         "m-auto z-[calc(1000-var(--flash-index))] not-aria-hidden:translate-y-[calc(var(--flash-offset-y))] not-aria-hidden:opacity-100"
