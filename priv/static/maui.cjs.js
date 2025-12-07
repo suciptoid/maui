@@ -2043,20 +2043,27 @@ var FlashGroup = class extends import_phoenix_live_view4.ViewHook {
   }
   _onClose(event) {
     const flash = event.currentTarget.closest('[role="alert"]');
-    if (this.liveSocket?.isConnected()) {
-      this.pushEvent("lv:clear-flash", { value: flash.dataset.flashId });
-    }
     this._removeFlash(flash);
   }
   _removeFlash(flash) {
+    if (this.liveSocket?.isConnected()) {
+      this.pushEvent("lv:clear-flash", { value: flash.dataset.flashId });
+    }
     const flashId = flash.dataset.flashId;
     if (this.#timers.has(flashId)) {
       const timerObj = this.#timers.get(flashId);
       clearTimeout(timerObj.timer);
       this.#timers.delete(flashId);
     }
-    flash.remove();
-    this._updateFlashList();
+    flash.style.transition = "transform 100ms ease-in-out, opacity 100ms ease-in-out";
+    flash.style.transform = "scale(0.9)";
+    flash.style.opacity = "0";
+    const animationEndHandler = () => {
+      flash.removeEventListener("transitionend", animationEndHandler);
+      flash.remove();
+      this._updateFlashList();
+    };
+    flash.addEventListener("transitionend", animationEndHandler);
   }
   _startTimerForFlash(flash) {
     const flashId = flash.dataset.flashId;
