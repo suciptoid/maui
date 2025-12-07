@@ -181,6 +181,14 @@ defmodule AppWeb.Layouts do
               </.sidebar_link>
 
               <.sidebar_link
+                patch={~p"/progress_badges"}
+                active={@live_action == :progress_badges}
+                icon="hero-bolt"
+              >
+                Progress & Badges
+              </.sidebar_link>
+
+              <.sidebar_link
                 patch={~p"/dialog"}
                 active={@live_action == :dialog}
                 icon="hero-window"
@@ -259,6 +267,7 @@ defmodule AppWeb.Layouts do
   defp page_title(:toast), do: "Toast"
   defp page_title(:container), do: "Container"
   defp page_title(:dialog), do: "Dialog"
+  defp page_title(:progress_badges), do: "Progress & Badges"
   defp page_title(_), do: "Components"
 
   @doc """

@@ -28,6 +28,7 @@ defmodule AppWeb.Router do
     live "/alert", Live.Demo, :alert
     live "/select", Live.DemoSelect, :select
     live "/container", Live.DemoContainer, :container
+    live "/progress_badges", Live.DemoProgressBadges, :progress_badges
     live "/link/:any", Live.Demo, :index
     live "/tab/:tab", Live.DemoTab
     live "/tab", Live.DemoTab, :index

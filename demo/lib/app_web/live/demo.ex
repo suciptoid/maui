@@ -210,6 +210,12 @@ defmodule AppWeb.Live.Demo do
           icon="hero-exclamation-triangle"
           patch={~p"/alert"}
         />
+        <.component_card
+          title="Progress & Badges"
+          description="Progress bars and badge components for status indicators."
+          icon="hero-bolt"
+          patch={~p"/progress_badges"}
+        />
       </div>
 
       <div class="mt-8 p-6 bg-accent/30 rounded-lg border border-border">
@@ -329,7 +335,12 @@ defmodule AppWeb.Live.Demo do
             </.form>
           </div>
           <div class="flex justify-end flex-col">
-            <.textarea label="Textarea" placeholder="Enter text..." field={@form[:text]} id="custom-textarea" />
+            <.textarea
+              label="Textarea"
+              placeholder="Enter text..."
+              field={@form[:text]}
+              id="custom-textarea"
+            />
           </div>
         </div>
       </div>
