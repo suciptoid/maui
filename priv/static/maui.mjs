@@ -1974,9 +1974,13 @@ var Tooltip = class extends ViewHook3 {
 import { ViewHook as ViewHook4 } from "phoenix_live_view";
 var FlashGroup = class extends ViewHook4 {
   max_flashes = 3;
+  flash_timeout = 5;
+  #timers = /* @__PURE__ */ new Map();
+  #pausedTimers = /* @__PURE__ */ new Map();
   mounted() {
     this._updateFlashList();
     this.max_flashes = this.el.dataset.maxFlashes || this.max_flashes;
+    this.flash_timeout = this.el.dataset.flashTimeout || this.flash_timeout;
     this.el.addEventListener(
       "mouseenter",
       this._onContainerMouseEnter.bind(this)
@@ -1990,6 +1994,8 @@ var FlashGroup = class extends ViewHook4 {
     this._updateFlashList();
   }
   destroyed() {
+    this.#timers.forEach((timerObj) => clearTimeout(timerObj.timer));
+    this.#timers.clear();
     this.el.removeEventListener(
       "mouseenter",
       this._onContainerMouseEnter.bind(this)
@@ -2000,16 +2006,78 @@ var FlashGroup = class extends ViewHook4 {
     );
   }
   _onContainerMouseEnter() {
+    this._pauseAllTimers();
   }
   _onContainerMouseLeave() {
+    this._resumeAllTimers();
   }
   _onClose(event) {
     const flash = event.currentTarget.closest('[role="alert"]');
     if (this.liveSocket?.isConnected()) {
       this.pushEvent("lv:clear-flash", { value: flash.dataset.flashId });
     }
+    this._removeFlash(flash);
+  }
+  _removeFlash(flash) {
+    const flashId = flash.dataset.flashId;
+    if (this.#timers.has(flashId)) {
+      const timerObj = this.#timers.get(flashId);
+      clearTimeout(timerObj.timer);
+      this.#timers.delete(flashId);
+    }
     flash.remove();
     this._updateFlashList();
+  }
+  _startTimerForFlash(flash) {
+    const flashId = flash.dataset.flashId;
+    let duration = parseInt(flash.dataset.duration);
+    if (duration === -1) {
+      return;
+    }
+    const flashTimeout = (!isNaN(duration) ? duration : this.flash_timeout) * 1e3;
+    if (this.#timers.has(flashId)) {
+      const existingTimer = this.#timers.get(flashId);
+      clearTimeout(existingTimer.timer);
+    }
+    const remainingTime = this.#pausedTimers.has(flashId) ? this.#pausedTimers.get(flashId) : flashTimeout;
+    const startTime = Date.now();
+    const timer = setTimeout(() => {
+      this._removeFlash(flash);
+    }, remainingTime);
+    this.#timers.set(flashId, { timer, startTime, timeout: flashTimeout });
+    if (this.#pausedTimers.has(flashId)) {
+      this.#pausedTimers.delete(flashId);
+    }
+  }
+  _pauseAllTimers() {
+    this.#timers.forEach((timerObj, flashId) => {
+      clearTimeout(timerObj.timer);
+      const elapsed = Date.now() - timerObj.startTime;
+      const remainingTime = Math.max(0, timerObj.timeout - elapsed);
+      this.#pausedTimers.set(flashId, remainingTime);
+    });
+    this.#timers.clear();
+  }
+  _resumeAllTimers() {
+    this.#pausedTimers.forEach((remainingTime, flashId) => {
+      const flash = this.el.querySelector(`[data-flash-id="${flashId}"]`);
+      if (flash) {
+        const duration = parseInt(flash.dataset.duration);
+        if (duration !== -1) {
+          const flashTimeout = (!isNaN(duration) ? duration : this.flash_timeout) * 1e3;
+          const startTime = Date.now();
+          const timer = setTimeout(() => {
+            this._removeFlash(flash);
+          }, remainingTime);
+          this.#timers.set(flashId, {
+            timer,
+            startTime,
+            timeout: flashTimeout
+          });
+        }
+      }
+    });
+    this.#pausedTimers.clear();
   }
   _updateFlashList() {
     this.flash = this.el.querySelectorAll('[role="alert"]');
@@ -2018,6 +2086,9 @@ var FlashGroup = class extends ViewHook4 {
       flash.dataset.index = index;
       flash.dataset.position = position;
       flash.style.setProperty("--flash-index", index);
+      if (flash.phxPrivate?.["JS:ignore_attrs"] == null) {
+        this.js().ignoreAttributes(flash, ["aria-*", "data-visible", "style"]);
+      }
       if (index === 0 && flash.dataset.visible !== "true") {
         flash.setAttribute("aria-hidden", "true");
         flash.style.transition = "none";
@@ -2042,6 +2113,10 @@ var FlashGroup = class extends ViewHook4 {
       if (closeButton?.dataset.close == "") {
         closeButton?.addEventListener("click", this._onClose.bind(this));
         closeButton.dataset.close = "true";
+      }
+      const flashId = flash.dataset.flashId;
+      if (!this.#timers.has(flashId)) {
+        this._startTimerForFlash(flash);
       }
     });
   }
