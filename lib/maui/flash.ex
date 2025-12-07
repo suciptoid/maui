@@ -28,19 +28,19 @@ defmodule Maui.Flash do
   end
 
   def update(%{from: :send_flash, flash: flash}, socket) do
-    flash = map_flash(flash)
 
-    socket =
-      if flash != [] do
-        Enum.reduce(flash, socket, fn item, sock ->
-          stream_insert(sock, :flashs, item, limit: socket.assigns.limit, at: 0)
-        end)
-      else
-        socket
-      end
+    socket = stream_insert(socket, :flashs, flash, limit: socket.assigns.limit, at: 0)
 
     {:ok, socket}
   end
+
+  def update(%{from: :update_flash, flash: flash}, socket) do
+
+    socket = stream_insert(socket, :flashs, flash, limit: socket.assigns.limit, at: 0, update_only: true)
+
+    {:ok, socket}
+  end
+
 
   def update(assigns, socket) do
     flash = map_flash(assigns.flash)
@@ -244,16 +244,6 @@ defmodule Maui.Flash do
 
   defp map_flash(flash) do
     Enum.map(flash, fn {key, value} -> %{key: key, value: value} end)
-    |> Enum.map(fn f ->
-      id =
-        "fl#{System.unique_integer([:positive])}"
-
-      case f.value do
-        v when is_binary(v) -> %{id: id, key: f.key, message: v}
-        {type, message} -> %{id: id, key: f.key, type: type, message: message}
-        _ -> %{id: id, key: f.key, message: f.value}
-      end
-    end)
     |> Enum.filter(fn f ->
       key =
         case f.key do
@@ -262,21 +252,41 @@ defmodule Maui.Flash do
           _ -> ""
         end
 
-      String.starts_with?(key, ["error", "info", "flash", "toast"])
+      String.starts_with?(key, ["error", "info", "flash", "toast", "success", "warning"])
+    end)
+    |> Enum.map(fn f ->
+      id =
+        "fl#{System.unique_integer([:positive])}"
+
+      case f.value do
+        v when is_binary(v) -> %Message{id: id, message: v}
+        {type, message} -> %Message{id: id, type: type, message: message}
+        _ -> %Message{id: id, message: f.value}
+      end
     end)
   end
 
-  def send_flash(message, opts \\ []) do
-    cid = Keyword.get(opts, :container_id, @default_container_id)
-    id = Keyword.get(opts, :id, "flash-#{System.unique_integer([:positive])}")
+  def send_flash(%Message{} = flash) do
+    Phoenix.LiveView.send_update(Maui.Flash,
+      id: @default_container_id,
+      flash: flash,
+      from: :send_flash
+    )
 
-    flash =
-      case message do
-        {type, message} -> %{id => {type, message}}
-        message when is_binary(message) -> %{id => {:info, message}}
-        _ -> %{id => {:info, message}}
-      end
+    {:ok, flash}
+  end
 
-    Phoenix.LiveView.send_update(Maui.Flash, id: cid, flash: flash, from: :send_flash)
+  def send_flash(message) do
+    send_flash(%Message{id: "fl-#{System.unique_integer([:positive])}", message: message})
+  end
+
+  def update_flash(%Message{} = flash) do
+    Phoenix.LiveView.send_update(Maui.Flash,
+      id: @default_container_id,
+      flash: flash,
+      from: :update_flash
+    )
+
+    {:ok, flash}
   end
 end

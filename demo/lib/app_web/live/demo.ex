@@ -30,6 +30,17 @@ defmodule AppWeb.Live.Demo do
     {:noreply, socket}
   end
 
+  def handle_event("update_flash", _prams, socket) do
+    Maui.Flash.send_flash(%Maui.Flash.Message{
+      id: "update-me",
+      type: :info,
+      message: "Updating....."
+    })
+
+    Process.send_after(self(), :update_flash, 1000)
+    {:noreply, socket}
+  end
+
   def handle_event("set_flash_placement", %{"placement" => placement}, socket) do
     {:noreply, socket |> assign(:flash_placement, placement)}
   end
@@ -81,6 +92,24 @@ defmodule AppWeb.Live.Demo do
 
   def handle_event("validate", params, socket) do
     socket = socket |> assign(:form, to_form(params))
+    {:noreply, socket}
+  end
+
+  def handle_info(:update_flash, socket) do
+    assigns = %{}
+    message = ~H"""
+    <div class="flex items-start gap-2">
+    <.icon name="hero-check-circle" class="size-5" />
+    Flash updated from backend
+    </div>
+    """
+
+    Maui.Flash.send_flash(%Maui.Flash.Message{
+      id: "update-me",
+      type: :info,
+      message: message
+    })
+
     {:noreply, socket}
   end
 
@@ -372,7 +401,7 @@ defmodule AppWeb.Live.Demo do
           <.label class="hover:bg-accent/50 flex items-start gap-3 rounded-lg border border-border p-3 has-checked:border-blue-600 has-checked:bg-blue-50 dark:has-checked:border-blue-900 dark:has-checked:bg-blue-950">
             <.checkbox
               id="toggle-2"
-              class="checked:!border-blue-600 checked:!bg-blue-600 checked:text-white dark:checked:border-blue-700 dark:checked:bg-blue-700"
+              class="checked:border-blue-600! checked:bg-blue-600! checked:text-white dark:checked:border-blue-700 dark:checked:bg-blue-700"
             />
             <div class="grid gap-1.5 font-normal">
               <p class="text-sm leading-none font-medium">
@@ -580,6 +609,10 @@ defmodule AppWeb.Live.Demo do
 
       <.button phx-click="send_flash" variant="default">
         <.icon name="hero-bell" class="size-4" /> Use send_flash
+      </.button>
+
+      <.button phx-click="update_flash" variant="default">
+        <.icon name="hero-bell" class="size-4" /> Update Flash
       </.button>
 
       <div class="p-6 bg-accent/30 rounded-lg border border-border">

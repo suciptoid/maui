@@ -55,6 +55,11 @@ export default class FlashGroup extends ViewHook {
       flash.dataset.index = index;
       flash.dataset.position = position;
       flash.style.setProperty("--flash-index", index);
+
+      if (flash.phxPrivate?.["JS:ignore_attrs"] == null) {
+        this.js().ignoreAttributes(flash, ["aria-*", "data-*", "style"]);
+      }
+
       if (index === 0 && flash.dataset.visible !== "true") {
         flash.setAttribute("aria-hidden", "true");
         flash.style.transition = "none";
