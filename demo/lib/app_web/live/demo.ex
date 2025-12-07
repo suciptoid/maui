@@ -31,13 +31,36 @@ defmodule AppWeb.Live.Demo do
   end
 
   def handle_event("update_flash", _prams, socket) do
+    assigns = %{}
+
+    message = ~H"""
+    <div class="flex items-center gap-2">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="animate-spin text-blue-500"
+      >
+        <path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 6l0 -3" /><path d="M16.25 7.75l2.15 -2.15" /><path d="M18 12l3 0" /><path d="M16.25 16.25l2.15 2.15" /><path d="M12 18l0 3" /><path d="M7.75 16.25l-2.15 2.15" /><path d="M6 12l-3 0" /><path d="M7.75 7.75l-2.15 -2.15" />
+      </svg>
+      Updating...
+    </div>
+    """
+
     Maui.Flash.send_flash(%Maui.Flash.Message{
       id: "update-me",
       type: :info,
-      message: "Updating....."
+      message: message,
+      duration: -1
     })
 
-    Process.send_after(self(), :update_flash, 1000)
+    Process.send_after(self(), :update_flash, 10000)
     {:noreply, socket}
   end
 
@@ -97,16 +120,17 @@ defmodule AppWeb.Live.Demo do
 
   def handle_info(:update_flash, socket) do
     assigns = %{}
+
     message = ~H"""
     <div class="flex items-start gap-2">
-    <.icon name="hero-check-circle" class="size-5" />
-    Flash updated from backend
+      <.icon name="hero-check-circle" class="size-5" /> Flash updated from backend
     </div>
     """
 
     Maui.Flash.send_flash(%Maui.Flash.Message{
       id: "update-me",
       type: :info,
+      duration: 5,
       message: message
     })
 

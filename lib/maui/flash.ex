@@ -80,6 +80,7 @@ defmodule Maui.Flash do
           :for={{id, flash} <- @streams.flashs}
           id={id}
           data-flash-id={flash.id}
+          data-duration={flash.duration}
           position={@position}
         >
           {flash.message}
