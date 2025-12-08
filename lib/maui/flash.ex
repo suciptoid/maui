@@ -267,13 +267,15 @@ defmodule Maui.Flash do
     end)
   end
 
-  def send_flash(%Message{} = flash) do
+  def send_flash(pid \\ self(), message)
+
+  def send_flash(pid, %Message{} = flash) do
     flash =
       Map.update(flash, :id, "fl-#{System.unique_integer([:positive])}", fn v ->
         if is_nil(v), do: "fl-#{System.unique_integer([:positive])}", else: v
       end)
 
-    Phoenix.LiveView.send_update(Maui.Flash,
+    Phoenix.LiveView.send_update(pid, Maui.Flash,
       id: @default_container_id,
       flash: flash,
       from: :send_flash
@@ -282,12 +284,12 @@ defmodule Maui.Flash do
     {:ok, flash}
   end
 
-  def send_flash(message) do
-    send_flash(%Message{id: "fl-#{System.unique_integer([:positive])}", message: message})
+  def send_flash(pid, message) do
+    send_flash(pid, %Message{id: "fl-#{System.unique_integer([:positive])}", message: message})
   end
 
-  def update_flash(%Message{} = flash) do
-    Phoenix.LiveView.send_update(Maui.Flash,
+  def update_flash(pid \\ self(), %Message{} = flash) do
+    Phoenix.LiveView.send_update(pid, Maui.Flash,
       id: @default_container_id,
       flash: flash,
       from: :update_flash

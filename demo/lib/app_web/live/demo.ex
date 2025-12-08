@@ -678,7 +678,7 @@ defmodule AppWeb.Live.Demo do
       </.button>
 
       <.button phx-click="custom_flash" variant="outline">
-        <.icon name="hero-bell" class="size-4" /> Update Flash
+        <.icon name="hero-bell" class="size-4" /> Customize Flash
       </.button>
 
       <div class="p-6 bg-accent/30 rounded-lg border border-border">
