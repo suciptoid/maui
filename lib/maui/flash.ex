@@ -8,7 +8,9 @@ defmodule Maui.Flash do
               type: :info,
               duration: 5,
               auto_dismiss: true,
-              dismissable: true
+              dismissable: true,
+              class: "",
+              show_close: true
 
     def new(message \\ "") do
       %__MODULE__{
@@ -28,19 +30,17 @@ defmodule Maui.Flash do
   end
 
   def update(%{from: :send_flash, flash: flash}, socket) do
-
     socket = stream_insert(socket, :flashs, flash, limit: socket.assigns.limit, at: 0)
 
     {:ok, socket}
   end
 
   def update(%{from: :update_flash, flash: flash}, socket) do
-
-    socket = stream_insert(socket, :flashs, flash, limit: socket.assigns.limit, at: 0, update_only: true)
+    socket =
+      stream_insert(socket, :flashs, flash, limit: socket.assigns.limit, at: 0, update_only: true)
 
     {:ok, socket}
   end
-
 
   def update(assigns, socket) do
     flash = map_flash(assigns.flash)
@@ -82,6 +82,8 @@ defmodule Maui.Flash do
           data-flash-id={flash.id}
           data-duration={flash.duration}
           position={@position}
+          class={flash.class}
+          show_close={flash.show_close}
         >
           {flash.message}
         </.flash>
@@ -159,16 +161,12 @@ defmodule Maui.Flash do
   """
   attr :id, :string
   attr :position, :string, default: @default_position
+  attr :class, :string, default: ""
+  attr :show_close, :boolean, default: true
   attr :rest, :global
   slot :inner_block
 
   def flash(assigns) do
-    assigns =
-      assigns
-      |> assign_new(:id, fn ->
-        "fl-#{System.unique_integer([:positive])}"
-      end)
-
     ~H"""
     <div
       id={@id}
@@ -176,11 +174,12 @@ defmodule Maui.Flash do
       aria-hidden="true"
       data-position={@position}
       class={[
-        "bg-secondary text-secondary-foreground w-full text-sm group",
-        "min-w-32 rounded-md border border-border py-3 px-4 shadow-sm",
+        "bg-background text-secondary-foreground text-sm group",
+        "w-full rounded-md border border-border py-3 px-4 shadow-sm",
         "transition-all duration-400 opacity-0",
         "absolute left-0 right-0 data-[position^='top-']:top-0 data-[position^='bottom-']:bottom-0",
-        "m-auto z-[calc(1000-var(--flash-index))] not-aria-hidden:translate-y-[calc(var(--flash-offset-y))] not-aria-hidden:opacity-100"
+        "m-auto z-[calc(1000-var(--flash-index))] not-aria-hidden:translate-y-[calc(var(--flash-offset-y))] not-aria-hidden:opacity-100",
+        @class
       ]}
       {@rest}
     >
@@ -189,6 +188,7 @@ defmodule Maui.Flash do
       </div>
 
       <button
+        :if={@show_close}
         data-close
         class="absolute hidden group-hover:flex top-1.5 right-1.5 p-0.5 w-fit items-center justify-center rounded-sm hover:bg-popover/90"
       >
@@ -268,6 +268,11 @@ defmodule Maui.Flash do
   end
 
   def send_flash(%Message{} = flash) do
+    flash =
+      Map.update(flash, :id, "fl-#{System.unique_integer([:positive])}", fn v ->
+        if is_nil(v), do: "fl-#{System.unique_integer([:positive])}", else: v
+      end)
+
     Phoenix.LiveView.send_update(Maui.Flash,
       id: @default_container_id,
       flash: flash,

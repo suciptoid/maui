@@ -30,6 +30,44 @@ defmodule AppWeb.Live.Demo do
     {:noreply, socket}
   end
 
+  def handle_event("custom_flash", _params, socket) do
+    assigns = %{}
+
+    message = ~H"""
+    <div class="flex items-center gap-2">
+      <div>
+        <.icon name="hero-check-circle" class="size-6" /> Flash customized successfully!
+      </div>
+      <button
+        data-close
+        class=" hidden group-hover:flex top-1.5 right-1.5 p-0.5 w-fit items-center justify-center rounded-sm hover:bg-popover/90"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="size-4"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    """
+
+    Maui.Flash.send_flash(%Maui.Flash.Message{
+      type: :info,
+      message: message,
+      duration: 8,
+      show_close: false,
+      class: "w-fit! border-green-500! bg-green-100! text-green-800!"
+    })
+    |> dbg
+
+    {:noreply, socket}
+  end
+
   def handle_event("update_flash", _prams, socket) do
     assigns = %{}
 
@@ -636,6 +674,10 @@ defmodule AppWeb.Live.Demo do
       </.button>
 
       <.button phx-click="update_flash" variant="default">
+        <.icon name="hero-bell" class="size-4" /> Update Flash
+      </.button>
+
+      <.button phx-click="custom_flash" variant="outline">
         <.icon name="hero-bell" class="size-4" /> Update Flash
       </.button>
 
