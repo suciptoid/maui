@@ -16,6 +16,7 @@ export default class Popover extends ViewHook {
   event_trigger = "click"; // "click" | "hover" | "focus"
   currentIndex = -1;
   expand_popover = false; // expand popover to match width of trigger
+  focus_selected = true;
 
   #outside_listener;
   #clear_floating;
@@ -159,6 +160,7 @@ export default class Popover extends ViewHook {
         item.getAttribute("aria-hidden") !== "true",
     );
     const itemCount = visibleItems.length;
+
     if (itemCount === 0) return;
 
     event.preventDefault();
@@ -183,8 +185,13 @@ export default class Popover extends ViewHook {
     visibleItems.forEach((item, index) => {
       if (index === newIndex) {
         item.setAttribute("aria-selected", "true");
+        item.setAttribute("tabindex", "0");
+        if (this.focus_selected) {
+          item.focus();
+        }
         item.scrollIntoView({ block: "nearest" });
       } else {
+        item.setAttribute("tabindex", "-1");
         item.removeAttribute("aria-selected");
       }
     });
@@ -238,18 +245,24 @@ export default class Popover extends ViewHook {
     this.expanded = false;
     this.currentIndex = -1;
 
-    this.removeOutsideListener();
     this.onPopupClosed();
+    this.removeOutsideListener();
   }
 
   onPopupClosed() {
-    this.trigger?.focus();
+    if (
+      this.popup?.contains(document.activeElement) ||
+      this.trigger?.contains(document.activeElement)
+    ) {
+      this.trigger?.focus();
+    }
   }
 
   openPopover() {
     this.trigger?.setAttribute("aria-expanded", "true");
     this.popup?.setAttribute("aria-hidden", "false");
 
+    this.popup?.focus();
     this.expanded = true;
 
     this.listenOutside();

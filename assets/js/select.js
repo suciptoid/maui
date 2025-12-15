@@ -2,6 +2,7 @@ import Popover from "./popover";
 export default class Select extends Popover {
   placement = "bottom-start";
   expand_popover = true;
+  focus_selected = false;
 
   #searchInputHandler;
   mounted() {

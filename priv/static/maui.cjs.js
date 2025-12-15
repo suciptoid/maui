@@ -1521,6 +1521,7 @@ var Popover = class extends import_phoenix_live_view.ViewHook {
   currentIndex = -1;
   expand_popover = false;
   // expand popover to match width of trigger
+  focus_selected = true;
   #outside_listener;
   #clear_floating;
   mounted() {
@@ -1646,8 +1647,13 @@ var Popover = class extends import_phoenix_live_view.ViewHook {
     visibleItems.forEach((item, index) => {
       if (index === newIndex) {
         item.setAttribute("aria-selected", "true");
+        item.setAttribute("tabindex", "0");
+        if (this.focus_selected) {
+          item.focus();
+        }
         item.scrollIntoView({ block: "nearest" });
       } else {
+        item.setAttribute("tabindex", "-1");
         item.removeAttribute("aria-selected");
       }
     });
@@ -1695,15 +1701,18 @@ var Popover = class extends import_phoenix_live_view.ViewHook {
     this.popup?.setAttribute("aria-hidden", "true");
     this.expanded = false;
     this.currentIndex = -1;
-    this.removeOutsideListener();
     this.onPopupClosed();
+    this.removeOutsideListener();
   }
   onPopupClosed() {
-    this.trigger?.focus();
+    if (this.popup?.contains(document.activeElement) || this.trigger?.contains(document.activeElement)) {
+      this.trigger?.focus();
+    }
   }
   openPopover() {
     this.trigger?.setAttribute("aria-expanded", "true");
     this.popup?.setAttribute("aria-hidden", "false");
+    this.popup?.focus();
     this.expanded = true;
     this.listenOutside();
   }
@@ -1726,6 +1735,7 @@ var Popover = class extends import_phoenix_live_view.ViewHook {
 var Select = class extends Popover {
   placement = "bottom-start";
   expand_popover = true;
+  focus_selected = false;
   #searchInputHandler;
   mounted() {
     this.name = "select";

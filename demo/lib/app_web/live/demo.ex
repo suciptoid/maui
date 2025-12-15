@@ -564,7 +564,7 @@ defmodule AppWeb.Live.Demo do
         <div class="flex flex-wrap gap-4">
           <Maui.Dropdown.menu_button content_class="w-52">
             <.icon name="hero-user" class="size-4" /> Update Profile
-            <:item shortcut="⇧⌘P">
+            <:item navigate="/select" shortcut="⇧⌘P">
               <.icon name="hero-user" class="size-4" /> Profile
             </:item>
             <:item shortcut="⌘S">
@@ -584,6 +584,9 @@ defmodule AppWeb.Live.Demo do
           <Maui.Dropdown.menu_button content_class="w-52">
             <.icon name="hero-trash" class="size-4" /> Delete Options
             <:items>
+              <.link navigate="/select" role="menuitem">
+                <.icon name="hero-cog" class="size-4" /> Select (link)
+              </.link>
               <Maui.Dropdown.menu_item variant="destructive">
                 <.icon name="hero-trash" class="size-4" /> Delete User Profile
               </Maui.Dropdown.menu_item>
