@@ -164,6 +164,22 @@ defmodule AppWeb.Live.DemoDialog do
   </.dialog>
   """
 
+  @server_controlled_show_code """
+  # Using show={@show_dialog} - Dialog stays in DOM, visibility toggled
+  # Preserves form state, animations work on show/hide
+  <.dialog id="server-dialog" show={@show_dialog} on_cancel={JS.push("close_dialog")}>
+    ...
+  </.dialog>
+  """
+
+  @server_controlled_if_code """
+  # Using :if={@show_dialog} - Dialog mounted/unmounted from DOM
+  # Form state resets on close, no exit animations
+  <.dialog :if={@show_dialog} id="server-dialog-if" show={true} on_cancel={JS.push("close_dialog_if")}>
+    ...
+  </.dialog>
+  """
+
   def render(assigns) do
     assigns =
       assigns
@@ -173,6 +189,10 @@ defmodule AppWeb.Live.DemoDialog do
       |> assign(:alert_code, @alert_code)
       |> assign(:nested_code, @nested_code)
       |> assign(:custom_content_code, @custom_content_code)
+      |> assign(:server_controlled_show_code, @server_controlled_show_code)
+      |> assign(:server_controlled_if_code, @server_controlled_if_code)
+      |> assign_new(:show_dialog, fn -> false end)
+      |> assign_new(:show_dialog_if, fn -> false end)
 
     ~H"""
     <Layouts.docs flash={@flash} live_action={@live_action}>
@@ -380,7 +400,86 @@ defmodule AppWeb.Live.DemoDialog do
         </div>
         <.code_block code={@custom_content_code} />
       </.example_card>
+
+      <.example_card
+        title="Server Controlled with show={}"
+        description="Dialog stays in DOM, visibility toggled via hidden attribute. Preserves form state and supports animations."
+      >
+        <div class="flex items-center gap-3 mb-4">
+          <.button phx-click="open_dialog" variant="secondary">
+            Open with show={}
+          </.button>
+          <.dialog
+            id="server-dialog"
+            show={@show_dialog}
+            on_cancel={Phoenix.LiveView.JS.push("close_dialog")}
+          >
+            <div class="-mt-1.5 mb-1 text-lg font-medium">Using show=&#123;@show_dialog&#125;</div>
+            <div class="mb-6 text-base text-gray-600">
+              Dialog remains in DOM. Form state is preserved when closing and reopening.
+              Exit animations work because element is hidden, not removed.
+            </div>
+            <form class="space-y-4 mb-4">
+              <.input type="text" name="test" placeholder="Type something, close, reopen..." />
+            </form>
+            <div class="flex justify-end gap-4">
+              <.button phx-click="close_dialog" variant="secondary">
+                Close
+              </.button>
+            </div>
+          </.dialog>
+        </div>
+        <.code_block code={@server_controlled_show_code} />
+      </.example_card>
+
+      <.example_card
+        title="Server Controlled with :if={}"
+        description="Dialog mounted/unmounted from DOM. Form state resets on close, no exit animations."
+      >
+        <div class="flex items-center gap-3 mb-4">
+          <.button phx-click="open_dialog_if" variant="secondary">
+            Open with :if={}
+          </.button>
+          <.dialog
+            :if={@show_dialog_if}
+            id="server-dialog-if"
+            show={true}
+            on_cancel={Phoenix.LiveView.JS.push("close_dialog_if")}
+          >
+            <div class="-mt-1.5 mb-1 text-lg font-medium">Using :if=&#123;@show_dialog_if&#125;</div>
+            <div class="mb-6 text-base text-gray-600">
+              Dialog is mounted/unmounted from DOM. Form state resets when closed.
+              No exit animations since element is removed immediately.
+            </div>
+            <form class="space-y-4 mb-4">
+              <.input type="text" name="test_if" placeholder="Type something, close, reopen..." />
+            </form>
+            <div class="flex justify-end gap-4">
+              <.button phx-click="close_dialog_if" variant="secondary">
+                Close
+              </.button>
+            </div>
+          </.dialog>
+        </div>
+        <.code_block code={@server_controlled_if_code} />
+      </.example_card>
     </Layouts.docs>
     """
+  end
+
+  def handle_event("open_dialog", _, socket) do
+    {:noreply, assign(socket, show_dialog: true)}
+  end
+
+  def handle_event("close_dialog", _, socket) do
+    {:noreply, assign(socket, show_dialog: false)}
+  end
+
+  def handle_event("open_dialog_if", _, socket) do
+    {:noreply, assign(socket, show_dialog_if: true)}
+  end
+
+  def handle_event("close_dialog_if", _, socket) do
+    {:noreply, assign(socket, show_dialog_if: false)}
   end
 end
