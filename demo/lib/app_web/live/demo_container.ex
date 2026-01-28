@@ -164,8 +164,8 @@ defmodule AppWeb.Live.DemoContainer do
             <h4 class="font-medium mb-2">Basic Usage</h4>
             <div class="bg-muted rounded-lg p-4 text-sm">
               <code class="block whitespace-pre-wrap font-mono text-sm">&lt;Maui.Container.card&gt;
-    Card content goes here
-    &lt;/Maui.Container.card&gt;</code>
+                Card content goes here
+                &lt;/Maui.Container.card&gt;</code>
             </div>
           </div>
 
@@ -173,19 +173,19 @@ defmodule AppWeb.Live.DemoContainer do
             <h4 class="font-medium mb-2">Card with Header Components</h4>
             <div class="bg-muted rounded-lg p-4 text-sm">
               <code class="block whitespace-pre-wrap font-mono text-sm">&lt;Maui.Container.card&gt;
-    &lt;Maui.Container.card_header&gt;
-    &lt;Maui.Container.card_title&gt;Card Title&lt;/Maui.Container.card_title&gt;
-    &lt;Maui.Container.card_description&gt;Description&lt;/Maui.Container.card_description&gt;
-    &lt;/Maui.Container.card_header&gt;
+                &lt;Maui.Container.card_header&gt;
+                &lt;Maui.Container.card_title&gt;Card Title&lt;/Maui.Container.card_title&gt;
+                &lt;Maui.Container.card_description&gt;Description&lt;/Maui.Container.card_description&gt;
+                &lt;/Maui.Container.card_header&gt;
 
-    &lt;Maui.Container.card_content&gt;
-    Content goes here
-    &lt;/Maui.Container.card_content&gt;
+                &lt;Maui.Container.card_content&gt;
+                Content goes here
+                &lt;/Maui.Container.card_content&gt;
 
-    &lt;Maui.Container.card_footer&gt;
-    &lt;.button&gt;Action&lt;/.button&gt;
-    &lt;/Maui.Container.card_footer&gt;
-    &lt;/Maui.Container.card&gt;</code>
+                &lt;Maui.Container.card_footer&gt;
+                &lt;.button&gt;Action&lt;/.button&gt;
+                &lt;/Maui.Container.card_footer&gt;
+                &lt;/Maui.Container.card&gt;</code>
             </div>
           </div>
 
@@ -193,14 +193,14 @@ defmodule AppWeb.Live.DemoContainer do
             <h4 class="font-medium mb-2">Card with Action</h4>
             <div class="bg-muted rounded-lg p-4 text-sm">
               <code class="block whitespace-pre-wrap font-mono text-sm">&lt;Maui.Container.card&gt;
-    &lt;Maui.Container.card_header&gt;
-    &lt;Maui.Container.card_title&gt;Card Title&lt;/Maui.Container.card_title&gt;
-    &lt;Maui.Container.card_action&gt;
-    &lt;.button size="sm"&gt;Settings&lt;/.button&gt;
-    &lt;/Maui.Container.card_action&gt;
-    &lt;/Maui.Container.card_header&gt;
-    &lt;Maui.Container.card_content&gt;...&lt;/Maui.Container.card_content&gt;
-    &lt;/Maui.Container.card&gt;</code>
+                &lt;Maui.Container.card_header&gt;
+                &lt;Maui.Container.card_title&gt;Card Title&lt;/Maui.Container.card_title&gt;
+                &lt;Maui.Container.card_action&gt;
+                &lt;.button size="sm"&gt;Settings&lt;/.button&gt;
+                &lt;/Maui.Container.card_action&gt;
+                &lt;/Maui.Container.card_header&gt;
+                &lt;Maui.Container.card_content&gt;...&lt;/Maui.Container.card_content&gt;
+                &lt;/Maui.Container.card&gt;</code>
             </div>
           </div>
         </div>

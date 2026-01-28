@@ -86,6 +86,7 @@ defmodule AppWeb do
       import Phoenix.HTML
       # Core UI components
       import AppWeb.CoreComponents, only: [icon: 1, flash: 1, show: 1, hide: 1]
+      import AppWeb.DocComponents
 
       # Common modules used in templates
       alias Phoenix.LiveView.JS

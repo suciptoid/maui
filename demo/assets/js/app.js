@@ -25,6 +25,30 @@ import { LiveSocket } from "phoenix_live_view";
 import { hooks as colocatedHooks } from "phoenix-colocated/app";
 import { Hooks as MauiHooks } from "maui";
 
+const CopyCode = {
+  mounted() {
+    this.button = this.el.querySelector("button");
+    if (this.button) {
+      this.button.addEventListener("click", () => this.copyCode());
+    }
+  },
+  copyCode() {
+    const code = this.el.dataset.code;
+    navigator.clipboard.writeText(code).then(
+      () => {
+        const originalText = this.button.textContent;
+        this.button.textContent = "Copied!";
+        setTimeout(() => {
+          this.button.textContent = originalText;
+        }, 2000);
+      },
+      (err) => {
+        console.error("Failed to copy:", err);
+      }
+    );
+  },
+};
+
 const csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute("content");
@@ -34,6 +58,7 @@ const liveSocket = new LiveSocket("/live", Socket, {
   hooks: {
     ...colocatedHooks,
     ...MauiHooks,
+    CopyCode,
   },
   dom: {
     onBeforeElUpdated(from, to) {

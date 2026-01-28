@@ -132,7 +132,7 @@ defmodule AppWeb.Live.Demo do
      socket
      |> put_flash(
        :info,
-       "Flash message  dengan type :info"
+       "Flash message with type :info"
      )
      |> push_patch(to: "/flash")}
   end
@@ -142,11 +142,11 @@ defmodule AppWeb.Live.Demo do
      socket
      |> put_flash(
        :info,
-       "Flash message dari liveview ke deadview dengan type :info"
+       "Flash message navigating to dead view with type :info"
      )
      |> put_flash(
        :error,
-       "Flash message dari liveview ke deadview dengan type :error"
+       "Flash message navigating to dead view with type :error"
      )
      |> push_navigate(to: "/lc")}
   end
@@ -217,7 +217,7 @@ defmodule AppWeb.Live.Demo do
         </:icon>
 
         <:title>
-          Hello Alert Title ahah tanpa desc
+          Alert without description
         </:title>
 
         <%!-- <:description>
@@ -230,7 +230,7 @@ defmodule AppWeb.Live.Demo do
         </:icon>
 
         <:title>
-          Hello Alert Title ahah
+          Alert Title
         </:title>
 
         <:description>
@@ -243,7 +243,7 @@ defmodule AppWeb.Live.Demo do
         </:icon>
 
         <:title>
-          Hello Alert Title ahah
+          Alert Title
         </:title>
 
         <:description>
@@ -296,8 +296,8 @@ defmodule AppWeb.Live.Demo do
           patch={~p"/toast"}
         />
         <.component_card
-          title="Toast"
-          description="Toast notifications with beautiful animations."
+          title="Alert"
+          description="Alert components for important messages and warnings."
           icon="hero-exclamation-triangle"
           patch={~p"/alert"}
         />
@@ -305,7 +305,7 @@ defmodule AppWeb.Live.Demo do
           title="Progress & Badges"
           description="Progress bars and badge components for status indicators."
           icon="hero-bolt"
-          patch={~p"/progress_badges"}
+          patch={~p"/progress-badges"}
         />
       </div>
 

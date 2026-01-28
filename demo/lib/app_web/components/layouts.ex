@@ -102,6 +102,8 @@ defmodule AppWeb.Layouts do
           <%!-- Navigation --%>
           <nav class="flex-1 overflow-y-auto p-4">
             <div class="space-y-1">
+              <%!-- Getting Started --%>
+              <.sidebar_section first>Getting Started</.sidebar_section>
               <.sidebar_link
                 patch={~p"/"}
                 active={@live_action == :index}
@@ -109,13 +111,9 @@ defmodule AppWeb.Layouts do
               >
                 Overview
               </.sidebar_link>
-              <.sidebar_link
-                patch={~p"/alert"}
-                active={@live_action == :alert}
-                icon="hero-exclamation-circle"
-              >
-                Alert
-              </.sidebar_link>
+
+              <%!-- Forms --%>
+              <.sidebar_section>Forms</.sidebar_section>
               <.sidebar_link
                 patch={~p"/inputs"}
                 active={@live_action == :inputs}
@@ -123,7 +121,16 @@ defmodule AppWeb.Layouts do
               >
                 Inputs
               </.sidebar_link>
+              <.sidebar_link
+                patch={~p"/select"}
+                active={@live_action == :select}
+                icon="hero-chevron-up-down"
+              >
+                Select
+              </.sidebar_link>
 
+              <%!-- Actions --%>
+              <.sidebar_section>Actions</.sidebar_section>
               <.sidebar_link
                 patch={~p"/buttons"}
                 active={@live_action == :buttons}
@@ -131,7 +138,6 @@ defmodule AppWeb.Layouts do
               >
                 Buttons
               </.sidebar_link>
-
               <.sidebar_link
                 patch={~p"/dropdown"}
                 active={@live_action == :dropdown}
@@ -140,14 +146,15 @@ defmodule AppWeb.Layouts do
                 Dropdown
               </.sidebar_link>
 
+              <%!-- Overlays --%>
+              <.sidebar_section>Overlays</.sidebar_section>
               <.sidebar_link
-                patch={~p"/select"}
-                active={@live_action == :select}
-                icon="hero-chevron-down"
+                patch={~p"/dialog"}
+                active={@live_action == :dialog}
+                icon="hero-window"
               >
-                Select
+                Dialog
               </.sidebar_link>
-
               <.sidebar_link
                 patch={~p"/popover"}
                 active={@live_action == :popover}
@@ -156,6 +163,15 @@ defmodule AppWeb.Layouts do
                 Popover
               </.sidebar_link>
 
+              <%!-- Feedback --%>
+              <.sidebar_section>Feedback</.sidebar_section>
+              <.sidebar_link
+                patch={~p"/alert"}
+                active={@live_action == :alert}
+                icon="hero-exclamation-circle"
+              >
+                Alert
+              </.sidebar_link>
               <.sidebar_link
                 patch={~p"/toast"}
                 active={@live_action == :toast}
@@ -164,14 +180,8 @@ defmodule AppWeb.Layouts do
                 Toast
               </.sidebar_link>
 
-              <.sidebar_link
-                patch={~p"/tab"}
-                active={@live_action == :tab}
-                icon="hero-bell"
-              >
-                Tabs Demo
-              </.sidebar_link>
-
+              <%!-- Layout --%>
+              <.sidebar_section>Layout</.sidebar_section>
               <.sidebar_link
                 patch={~p"/container"}
                 active={@live_action == :container}
@@ -179,21 +189,22 @@ defmodule AppWeb.Layouts do
               >
                 Container
               </.sidebar_link>
-
               <.sidebar_link
-                patch={~p"/progress_badges"}
+                patch={~p"/tab"}
+                active={@live_action == :tab}
+                icon="hero-rectangle-stack"
+              >
+                Tabs Demo
+              </.sidebar_link>
+
+              <%!-- Data Display --%>
+              <.sidebar_section>Data Display</.sidebar_section>
+              <.sidebar_link
+                patch={~p"/progress-badges"}
                 active={@live_action == :progress_badges}
                 icon="hero-bolt"
               >
                 Progress & Badges
-              </.sidebar_link>
-
-              <.sidebar_link
-                patch={~p"/dialog"}
-                active={@live_action == :dialog}
-                icon="hero-window"
-              >
-                Dialog
               </.sidebar_link>
             </div>
           </nav>
@@ -256,6 +267,19 @@ defmodule AppWeb.Layouts do
     """
   end
 
+  attr :first, :boolean, default: false
+  slot :inner_block, required: true
+
+  defp sidebar_section(assigns) do
+    ~H"""
+    <div class={["px-3 py-2", !@first && "mt-4"]}>
+      <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        {render_slot(@inner_block)}
+      </span>
+    </div>
+    """
+  end
+
   defp page_title(:index), do: "Component Overview"
   defp page_title(:inputs), do: "Inputs"
   defp page_title(:buttons), do: "Buttons"
@@ -266,6 +290,8 @@ defmodule AppWeb.Layouts do
   defp page_title(:container), do: "Container"
   defp page_title(:dialog), do: "Dialog"
   defp page_title(:progress_badges), do: "Progress & Badges"
+  defp page_title(:alert), do: "Alert"
+  defp page_title(:tab), do: "Tabs"
   defp page_title(_), do: "Components"
 
   @doc """

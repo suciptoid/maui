@@ -54,7 +54,7 @@ defmodule AppWeb.Live.DemoSelect do
           </.select_item>
         </.select>
         <.select
-        label="Select with options"
+          label="Select with options"
           id="with-options"
           name="with-options"
           placeholder="Select with @options"
@@ -62,7 +62,7 @@ defmodule AppWeb.Live.DemoSelect do
           options={["Option 1", "Option 2"]}
         />
         <.select
-        label="Select with default"
+          label="Select with default"
           id="with-default-value"
           name="with-default-value"
           placeholder="Select with default"
@@ -71,14 +71,14 @@ defmodule AppWeb.Live.DemoSelect do
           options={["Option 1", "Option 2", "Option 3"]}
         />
         <.select
-        label="Select from strings"
+          label="Select from strings"
           id="with-options-strings"
           name="with-options-strings"
           placeholder="Select from strings"
           options={["Option A", "Option B", "Option C"]}
         />
         <.select
-        label="Select from tuples"
+          label="Select from tuples"
           id="with-options-tuples"
           name="with-options-tuples"
           placeholder="Select from tuples"
