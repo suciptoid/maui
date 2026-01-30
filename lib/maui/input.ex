@@ -1,4 +1,80 @@
 defmodule Maui.Input do
+  @moduledoc """
+  Form input components including text inputs, checkboxes, radio buttons, switches, and textareas.
+
+  ## Basic Text Input
+
+      <.input type="text" name="username" placeholder="Enter username" />
+
+  ## Input with Label
+
+      <.input type="email" label="Email" placeholder="you@example.com" />
+
+  ## With Phoenix Form
+
+      <.form for={@form} phx-change="validate">
+        <.input field={@form[:email]} type="email" label="Email" />
+        <.input field={@form[:password]} type="password" label="Password" />
+      </.form>
+
+  ## Input Types
+
+  Supports various HTML input types:
+
+      <.input type="text" placeholder="Text input" />
+      <.input type="email" placeholder="Email input" />
+      <.input type="password" placeholder="Password" />
+      <.input type="number" placeholder="Number" />
+      <.input type="file" />
+      <.input type="date" />
+
+  ## Checkbox
+
+      <.checkbox id="terms" label="I agree to the terms" />
+
+  Or with custom label:
+
+      <label class="flex items-center gap-2">
+        <.checkbox id="terms" />
+        <span>Accept terms</span>
+      </label>
+
+  ## Radio Button
+
+      <label class="flex items-center gap-2">
+        <.radio name="plan" value="basic" />
+        <span>Basic Plan</span>
+      </label>
+
+  ## Switch/Toggle
+
+      <.switch id="notifications" label="Enable notifications" />
+
+  ## Textarea
+
+      <.textarea label="Description" placeholder="Enter description..." />
+
+  ## Disabled State
+
+      <.input type="text" disabled placeholder="Disabled input" />
+      <.checkbox id="terms" disabled label="Disabled checkbox" />
+
+  ## Attributes (input/1)
+
+  | Attribute | Type | Default | Description |
+  |-----------|------|---------|-------------|
+  | `type` | `string` | `"text"` | Input type (text, email, password, etc.) |
+  | `label` | `string` | `nil` | Label text (creates wrapped label + input) |
+  | `field` | `FormField` | `nil` | Phoenix form field struct |
+  | `class` | `string` | `""` | Additional CSS classes |
+  | `id` | `any` | `nil` | Input ID |
+
+  ## Global Attributes
+
+  All standard HTML input attributes are supported: `accept`, `autocomplete`,
+  `disabled`, `max`, `min`, `pattern`, `placeholder`, `readonly`, `required`, etc.
+  """
+
   use Phoenix.Component
 
   attr :id, :any, default: nil

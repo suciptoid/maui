@@ -1,8 +1,74 @@
 defmodule Maui.Container do
-  use Phoenix.Component
-
   @moduledoc """
+  Container components for organizing content with consistent styling.
+
+  ## Card
+
+  Basic card container:
+
+      <.card>
+        Card content goes here
+      </.card>
+
+  ## Card with Header
+
+      <.card>
+        <.card_header>
+          <.card_title>Card Title</.card_title>
+          <.card_description>Card description</.card_description>
+        </.card_header>
+      </.card>
+
+  ## Full Card Example
+
+      <.card>
+        <.card_header>
+          <.card_title>Profile</.card_title>
+          <.card_description>Manage your account settings</.card_description>
+          <.card_action>
+            <.button size="sm">Edit</.button>
+          </.card_action>
+        </.card_header>
+
+        <.card_content>
+          <p>Your profile information goes here.</p>
+        </.card_content>
+
+        <.card_footer>
+          <.button variant="outline">Cancel</.button>
+          <.button>Save Changes</.button>
+        </.card_footer>
+      </.card>
+
+  ## Custom Styling
+
+      <.card class="bg-blue-50 border-blue-200">
+        Card with custom colors
+      </.card>
+
+  ## Icon
+
+  Render Heroicons:
+
+      <.icon name="hero-check-circle" />
+      <.icon name="hero-x-mark" class="w-5 h-5" />
+
+  ## Components
+
+  | Component | Description |
+  |-----------|-------------|
+  | `card/1` | Main card container |
+  | `card_header/1` | Card header section |
+  | `card_title/1` | Card title text |
+  | `card_description/1` | Card subtitle/description |
+  | `card_action/1` | Action buttons in header (right-aligned) |
+  | `card_content/1` | Main content area |
+  | `card_footer/1` | Footer section |
+  | `header/1` | Page header component |
+  | `icon/1` | Heroicon component |
   """
+
+  use Phoenix.Component
 
   attr :class, :string, default: ""
   attr :rest, :global

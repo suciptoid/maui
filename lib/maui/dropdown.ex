@@ -1,4 +1,87 @@
 defmodule Maui.Dropdown do
+  @moduledoc """
+  Dropdown menu component for displaying actions and options.
+
+  ## Basic Menu Button
+
+      <.menu_button>
+        Open Menu
+        <:item>Profile</:item>
+        <:item>Settings</:item>
+        <:item variant="destructive">Delete</:item>
+      </.menu_button>
+
+  ## With Shortcuts
+
+      <.menu_button content_class="w-52">
+        <.icon name="hero-user" class="size-4" /> Account
+        <:item shortcut="⌘P">Profile</:item>
+        <:item shortcut="⌘S">Settings</:item>
+        <:item shortcut="⇧⌘Q">Log out</:item>
+      </.menu_button>
+
+  ## With Links
+
+      <.menu_button>
+        Actions
+        <:item navigate="/profile">View Profile</:item>
+        <:item patch="/settings">Edit Settings</:item>
+        <:item href="/logout">Sign Out</:item>
+      </.menu_button>
+
+  ## Custom Items
+
+  For more control, use the `:items` slot with `menu_item`:
+
+      <.menu_button content_class="w-56">
+        Options
+        <:items>
+          <.menu_item navigate="/dashboard">
+            <.icon name="hero-home" class="size-4" /> Dashboard
+          </.menu_item>
+          <.menu_separator />
+          <.menu_item variant="destructive" phx-click="delete">
+            <.icon name="hero-trash" class="size-4" /> Delete
+          </.menu_item>
+        </:items>
+      </.menu_button>
+
+  ## Destructive Actions
+
+      <.menu_button>
+        Danger Zone
+        <:item variant="destructive" shortcut="⌘⌫">
+          <.icon name="hero-trash" class="size-4" /> Delete Account
+        </:item>
+      </.menu_button>
+
+  ## Attributes (menu_button/1)
+
+  | Attribute | Type | Default | Description |
+  |-----------|------|---------|-------------|
+  | `variant` | `string` | `"secondary"` | Button variant style |
+  | `content_class` | `string` | `""` | CSS classes for dropdown content |
+  | `class` | `string` | `""` | Additional CSS classes for button |
+
+  ## Slots (menu_button/1)
+
+  | Slot | Description |
+  |------|-------------|
+  | `inner_block` | Button content (required) |
+  | `item` | Menu items with optional attributes |
+  | `items` | Custom menu content using `menu_item` |
+
+  ## Item Attributes
+
+  | Attribute | Type | Description |
+  |-----------|------|-------------|
+  | `variant` | `string` | Item style: "default" or "destructive" |
+  | `shortcut` | `string` | Keyboard shortcut display |
+  | `href` | `string` | Link URL |
+  | `navigate` | `string` | Phoenix navigate path |
+  | `patch` | `string` | Phoenix patch path |
+  """
+
   use Phoenix.Component
 
   attr :variant, :string,

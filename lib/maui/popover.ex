@@ -1,9 +1,94 @@
 defmodule Maui.Popover do
+  @moduledoc """
+  Popover and tooltip components using Floating UI for positioning.
+
+  ## Base Popover
+
+  The base popover provides low-level building blocks for custom popover UIs:
+
+      <.popover_base
+        id="my-popover"
+        phx-hook="Maui.Popover"
+        data-placement="bottom"
+      >
+        <.button aria-haspopup="menu">Click Me</.button>
+
+        <:popup class="aria-hidden:hidden block p-4 bg-popover rounded-md shadow-md">
+          <p>Popover content here</p>
+        </:popup>
+      </.popover_base>
+
+  ## Tooltip
+
+  Tooltips appear on hover with configurable placement:
+
+      <.tooltip id="tooltip-1" placement="top">
+        <.button>Hover me</.button>
+        <:tooltip>This is a tooltip</:tooltip>
+      </.tooltip>
+
+  ### Placement Options
+
+      <.tooltip placement="top">...</.tooltip>
+      <.tooltip placement="bottom">...</.tooltip>
+      <.tooltip placement="left">...</.tooltip>
+      <.tooltip placement="right">...</.tooltip>
+
+  ## With Icons
+
+      <.tooltip id="icon-tooltip" placement="bottom">
+        <.icon name="hero-information-circle" class="size-5" />
+        <:tooltip>More information about this</:tooltip>
+      </.tooltip>
+
+  ## Rich Content
+
+      <.tooltip id="rich-tooltip">
+        <.button>Hover for details</.button>
+        <:tooltip>
+          <div class="w-[200px]">
+            <img src="..." class="rounded-t-md" />
+            <div class="p-2">
+              <p class="font-medium">Title</p>
+              <p class="text-sm">Description text</p>
+            </div>
+          </div>
+        </:tooltip>
+      </.tooltip>
+
+  ## Attributes (base/1)
+
+  | Attribute | Type | Default | Description |
+  |-----------|------|---------|-------------|
+  | `id` | `string` | required | Unique identifier |
+  | `hook` | `string` | `"Popover"` | Phoenix hook name |
+
+  ## Attributes (tooltip/1)
+
+  | Attribute | Type | Default | Description |
+  |-----------|------|---------|-------------|
+  | `id` | `string` | auto-generated | Unique identifier |
+  | `placement` | `string` | `"top"` | Tooltip position |
+  | `class` | `string` | `""` | Additional CSS classes |
+
+  ## Slots (base/1)
+
+  | Slot | Description |
+  |------|-------------|
+  | `trigger` | The element that triggers the popover |
+  | `popup` | The popover content |
+  | `inner_block` | Alternative to trigger slot |
+
+  ## Slots (tooltip/1)
+
+  | Slot | Description |
+  |------|-------------|
+  | `inner_block` | The element that triggers the tooltip |
+  | `tooltip` | The tooltip content |
+  """
+
   use Phoenix.Component
 
-  @doc """
-  Popover primitive
-  """
   attr :id, :string, required: true
   attr :rest, :global, doc: "the arbitrary HTML attributes to add to the flash container"
   attr :hook, :string, default: "Popover"
@@ -74,8 +159,8 @@ defmodule Maui.Popover do
       id={@id}
       class="w-fit group"
       data-placement={@placement}
-      phx-hook="Maui.Tooltip">
-
+      phx-hook="Maui.Tooltip"
+    >
       {render_slot(@inner_block)}
 
       <div
@@ -100,9 +185,11 @@ defmodule Maui.Popover do
       >
         {render_slot(@tooltip)}
 
-        <div data-arrow class="absolute bg-foreground fill-foreground z-[-1] size-2.5 rotate-45 rounded-[2px]">
+        <div
+          data-arrow
+          class="absolute bg-foreground fill-foreground z-[-1] size-2.5 rotate-45 rounded-[2px]"
+        >
         </div>
-
       </div>
     </div>
     """

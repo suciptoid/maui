@@ -1,4 +1,70 @@
 defmodule Maui.Button do
+  @moduledoc """
+  A versatile button component with multiple variants and sizes.
+
+  ## Basic Usage
+
+      <.button>Click me</.button>
+
+  ## Variants
+
+  Use the `variant` attribute to change the button style:
+
+      <.button variant="default">Default</.button>
+      <.button variant="secondary">Secondary</.button>
+      <.button variant="destructive">Destructive</.button>
+      <.button variant="outline">Outline</.button>
+      <.button variant="ghost">Ghost</.button>
+      <.button variant="link">Link</.button>
+
+  ## Sizes
+
+  Use the `size` attribute to adjust the button size:
+
+      <.button size="sm">Small</.button>
+      <.button size="default">Default</.button>
+      <.button size="lg">Large</.button>
+      <.button size="icon">
+        <.icon name="hero-heart" />
+      </.button>
+
+  ## With Icons
+
+  Include icons within the button content:
+
+      <.button>
+        <.icon name="hero-heart" class="w-4 h-4" />
+        Like
+      </.button>
+
+  ## As Links
+
+  Buttons can act as links using standard Phoenix link attributes:
+
+      <.button navigate={~p"/profile"}>Navigate</.button>
+      <.button patch={~p"/settings"}>Patch</.button>
+      <.button href="/logout">Href</.button>
+
+  ## Disabled State
+
+      <.button disabled>Disabled</.button>
+
+  ## Attributes
+
+  | Attribute | Type | Default | Description |
+  |-----------|------|---------|-------------|
+  | `variant` | `string` | `"default"` | Button style variant |
+  | `size` | `string` | `"default"` | Button size: "sm", "default", "lg", "icon" |
+  | `class` | `string` | `""` | Additional CSS classes |
+  | `rest` | `global` | - | HTML attributes including `href`, `navigate`, `patch`, `disabled` |
+
+  ## Slots
+
+  | Slot | Description |
+  |------|-------------|
+  | `inner_block` | Button content (required) |
+  """
+
   use Phoenix.Component
 
   attr :class, :string, default: ""

@@ -1,4 +1,87 @@
 defmodule Maui.Flash do
+  @moduledoc """
+  Toast notification system for LiveView applications.
+
+  ## Basic Setup
+
+  Add the flash group to your layout:
+
+      <Maui.Flash.flash_group flash={@flash} />
+
+  For LiveView pages with dynamic flashes:
+
+      <Maui.Flash.flash_group flash={@flash} live={true} />
+
+  ## Sending Flashes
+
+  From a LiveView:
+
+      Maui.Flash.send_flash("Operation completed successfully!")
+
+  With custom options:
+
+      Maui.Flash.send_flash(%Maui.Flash.Message{
+        type: :success,
+        message: "Saved!",
+        duration: 8,
+        class: "border-green-500"
+      })
+
+  ## Positioning
+
+  Position the flash container in different corners:
+
+      <Maui.Flash.flash_group flash={@flash} position="top-right" />
+      <Maui.Flash.flash_group flash={@flash} position="top-center" />
+      <Maui.Flash.flash_group flash={@flash} position="bottom-left" />
+
+  Available positions: `top-left`, `top-center`, `top-right`,
+  `bottom-left`, `bottom-center`, `bottom-right`
+
+  ## Custom Content
+
+  Send HEEx content in flashes:
+
+      Maui.Flash.send_flash(~H|<div class="flex items-center gap-2">
+        <.icon name="hero-check-circle" class="size-5" />
+        <span>Success!</span>
+      </div>|)
+
+  ## Updating Flashes
+
+  Update an existing flash by ID:
+
+      Maui.Flash.update_flash(%Maui.Flash.Message{
+        id: "my-flash",
+        message: "Updated!"
+      })
+
+  ## Configuration
+
+  | Attribute | Type | Default | Description |
+  |-----------|------|---------|-------------|
+  | `flash` | `map` | required | Phoenix flash map |
+  | `live` | `boolean` | `false` | Enable LiveComponent for dynamic updates |
+  | `position` | `string` | `"top-center"` | Container position |
+  | `limit` | `integer` | `5` | Maximum number of visible flashes |
+  | `auto_dismiss` | `integer` | `5000` | Auto-dismiss delay in ms |
+  | `show_close` | `boolean` | `true` | Show close button |
+
+  ## Message Struct
+
+  Create flash messages with the `Message` struct:
+
+      %Maui.Flash.Message{
+        message: "Hello!",           # Required
+        type: :info,                  # :info, :success, :warning, :error
+        duration: 5,                  # Seconds until auto-dismiss
+        auto_dismiss: true,           # Auto-dismiss enabled
+        dismissable: true,            # Allow manual dismiss
+        show_close: true,             # Show close button
+        class: ""                     # Additional CSS classes
+      }
+  """
+
   use Phoenix.LiveComponent
 
   defmodule Message do

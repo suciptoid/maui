@@ -1,4 +1,82 @@
 defmodule Maui.Select do
+  @moduledoc """
+  A customizable select dropdown component with search and grouping support.
+
+  ## Basic Usage
+
+      <.select id="food" name="food">
+        <.select_item value="apple">Apple</.select_item>
+        <.select_item value="banana">Banana</.select_item>
+        <.select_item value="orange">Orange</.select_item>
+      </.select>
+
+  ## With Options List
+
+  Pass options as a list for automatic rendering:
+
+      <.select id="food" name="food" options={["Apple", "Banana", "Orange"]} />
+
+  ## With Value/Label Pairs
+
+      <.select id="food" name="food" options={[
+        {"apple", "Apple"},
+        {"banana", "Banana"}
+      ]} />
+
+  ## With Groups
+
+      <.select id="food" name="food" options={[
+        {"Fruits", ["Apple", "Banana"]},
+        {"Vegetables", [{"carrot", "Carrot"}]}
+      ]} />
+
+  ## Searchable Select
+
+      <.select id="food" name="food" searchable={true} options={["Option 1", "Option 2"]} />
+
+  ## With Label
+
+      <.select id="food" name="food" label="Select Food">
+        <:option value="apple">Apple</:option>
+      </.select>
+
+  ## With Phoenix Form
+
+      <.form for={@form}>
+        <.select field={@form[:category]} options={@categories} />
+      </.form>
+
+  ## With Icons
+
+      <.select id="food" name="food">
+        <.select_item value="apple">
+          <.icon name="hero-apple" class="size-4" /> Apple
+        </.select_item>
+      </.select>
+
+  ## Attributes (select/1)
+
+  | Attribute | Type | Default | Description |
+  |-----------|------|---------|-------------|
+  | `id` | `string` | `nil` | Unique identifier |
+  | `name` | `string` | `nil` | Form field name |
+  | `value` | `string` | `nil` | Selected value |
+  | `placeholder` | `string` | `"Select an item"` | Placeholder text |
+  | `options` | `list` | `[]` | List of options (strings, tuples, or groups) |
+  | `searchable` | `boolean` | `false` | Enable search/filter functionality |
+  | `class` | `string` | `"w-fit"` | Additional CSS classes |
+  | `label` | `string` | `nil` | Label text |
+  | `field` | `FormField` | `nil` | Phoenix form field struct |
+
+  ## Slots
+
+  | Slot | Description |
+  |------|-------------|
+  | `inner_block` | Custom select items using `<.select_item>` |
+  | `header` | Content to display at the top of dropdown |
+  | `footer` | Content to display at the bottom of dropdown |
+  """
+
   use Phoenix.Component
   import Maui.Input, only: [label: 1]
 

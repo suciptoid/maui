@@ -4,7 +4,7 @@ defmodule Maui.MixProject do
   def project do
     [
       app: :maui,
-      version: "1.0.0-alpha.7",
+      version: "1.0.0-alpha.8",
       elixir: "~> 1.15",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
