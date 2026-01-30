@@ -27,6 +27,11 @@ defmodule AppWeb.Live.DemoSelect do
     {:noreply, socket}
   end
 
+  def handle_event("add-new-item", _params, socket) do
+    Maui.Flash.send_flash("Add new item clicked!")
+    {:noreply, socket}
+  end
+
   def render(assigns) do
     ~H"""
     <Layouts.docs flash={@flash} live_action={@live_action}>
@@ -106,6 +111,27 @@ defmodule AppWeb.Live.DemoSelect do
           class="w-full"
           options={[1, 2, 3]}
         />
+        <.select
+          label="Select with footer"
+          id="select-with-footer"
+          name="select-with-footer"
+          searchable={true}
+        >
+          <.select_item value="item-1">Item One</.select_item>
+          <.select_item value="item-2">Item Two</.select_item>
+          <.select_item value="item-3">Item Three</.select_item>
+          <:footer>
+            <div class="border-t border-border p-2">
+              <button
+                type="button"
+                phx-click="add-new-item"
+                class="flex items-center gap-2 text-sm text-primary "
+              >
+                <.icon name="hero-plus" class="size-4" /> Add New Item
+              </button>
+            </div>
+          </:footer>
+        </.select>
         <.input type="text" field={f[:select]} />
       </.form>
       <code class="whitespace-pre-line font-mono">

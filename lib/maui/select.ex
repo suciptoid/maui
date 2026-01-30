@@ -54,6 +54,22 @@ defmodule Maui.Select do
         </.select_item>
       </.select>
 
+  ## With Footer
+
+  Add custom content at the bottom of the dropdown, such as action buttons:
+
+      <.select id="items" name="items" searchable={true}>
+        <.select_item value="item-1">Item One</.select_item>
+        <.select_item value="item-2">Item Two</.select_item>
+        <:footer>
+          <div class="border-t border-border p-2">
+            <button type="button" phx-click="add-new" class="text-sm text-primary">
+              + Add New Item
+            </button>
+          </div>
+        </:footer>
+      </.select>
+
   ## Attributes (select/1)
 
   | Attribute | Type | Default | Description |
